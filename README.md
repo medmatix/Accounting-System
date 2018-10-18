@@ -27,4 +27,4 @@ Assets         |   1xx     | |101 Bank, 120 Receivables
 Expenses       |   5xx     | | 520 Mortgage
 | |   6xx     | Disposables | 620 Write-offs (Bad Debts)
 
-To debit a Debit Account is to increase it. similarly for crediting an Credit Account. crediting a Debit Account reduces it and vis-a-versa. Addition and subtraction of figures are implied and automatic. That is what the program must do in the database. Thus to balance accounts all debits have a credit somewhere and all credits have and offsetting debit - double entry.
+To debit a Debit Account is to increase it, similarly for crediting an Credit Account. Crediting a Debit Account reduces it and vis-a-versa. Addition and subtraction of figures are implied and automatic. That is what the program must do in the database table. Thus to balance accounts all debits have a credit somewhere and all credits have and offsetting debit - double entry.
