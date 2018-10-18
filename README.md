@@ -24,6 +24,6 @@ Assets         |   1xx     | |101 Bank, 120 Receivables
 | |   2xx     | Liabilities | 220 Payables
 | |   3xx     | Equity     | 301 Retained Earnings
 | |   4xx     | Revenue    | 420 Sales
-Expenses       |   5xx     | | 520Mortgage
-| |   6xx     | Disposables | 620 Write-offs
+Expenses       |   5xx     | | 520 Mortgage
+| |   6xx     | Disposables | 620 Write-offs (Bad Debts)
 
