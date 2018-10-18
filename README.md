@@ -21,8 +21,8 @@ The underlying categorization is defined by a set of accounts to which activitie
 DEBIT ACCOUNTS | NUMBERING | CREDIT ACCOUNTS 
 ---------------|-----------|-----------------
 Assets         |   1xx     |
-|   2xx     | Liabilities
-|   3xx     | Equity
+  |   2xx     | Liabilities
+  |   3xx     | Equity
 |   4xx     | Revenue
 Expenses       |   5xx     |
 |   6xx     | Depreciation
