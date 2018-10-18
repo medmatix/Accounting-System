@@ -101,6 +101,7 @@ class AccountingSystem():
         exit() 
         
     def do_showChart(self):
+        self.scrolList3.delete(1.0,tk.END)
         listAll = self.getChartAccounts()
         for row in listAll:
             #self.do_formatedList(row) 
@@ -147,7 +148,7 @@ class AccountingSystem():
         tab5 = ttk.Frame(tabControl)
         tabControl.add(tab5, text='Maintenance')
         
-        tabControl.pack(expand=1, fill="both")  # Pack to make visible
+        tabControl.grid()  # Pack to make visible
         
         frm1 = ttk.Labelframe(tab1, text='General Journal', width= 400, height=600)
         frm1.pack()
@@ -155,12 +156,19 @@ class AccountingSystem():
         frm2 = ttk.Labelframe(tab2, text='General Ledger', width= 400, height=600)
         frm2.pack()
         
+        ## Set tab and contents for the CHar of Accounts
         frm3 = ttk.Labelframe(tab3, text='Chart of Accounts', width= 400, height=600)
-        frm3.pack()
-        ttk.Label(frm3, text="Account \t Name \t\t\t\t\t\t\t\t\tType\t\t").grid(column=0, row=0, padx=4, pady=4,sticky='W')
+        frm3.grid()
+        frm3a = ttk.Labelframe(frm3, width= 400, height=500)
+        frm3a.grid()
+        self.updateChart = ttk.Button(frm3a, text="Update Display", command=lambda: self.do_showChart()).grid(column=0,row=0,padx=4, pady=4)
+        self.printChart = ttk.Button(frm3a, text="PRINT").grid(column=1,row=0,padx=4, pady=4)
+        self.newAccount = ttk.Button(frm3a, text="New Account").grid(column=2,row=0,padx=4, pady=4)
+        ttk.Label(frm3, text="Account \t Name \t\t\t\t\t\t\t\t\tType\t\t").grid(column=0, row=1, padx=4, pady=4,sticky='W')
         scrolW1  = 80; scrolH1  =  40
         self.scrolList3 = scrolledtext.ScrolledText(frm3, width=scrolW1, height=scrolH1, wrap=tk.WORD)
-        self.scrolList3.grid(column=0, row=1, padx=4, pady=4, sticky='WE', columnspan=3)
+        self.scrolList3.grid(column=0, row=2, padx=4, pady=4, sticky='WE', columnspan=3)
+        self.do_showChart()
         
         frm4 = ttk.Labelframe(tab4, text='Accounting Reports', width= 400, height=600)
         frm4.pack()
@@ -196,9 +204,18 @@ class AccountingSystem():
         menuBar.add_cascade(label="Edit", menu=editMenu)
         
         # Add an Edit Menu
+        entryMenu = Menu(menuBar, tearoff=0)
+        entryMenu.add_command(label="Journal Entry")
+        entryMenu.add_command(label="New Account")
+        entryMenu.add_separator()
+        entryMenu.add_command(label="Trial Balance")
+        entryMenu.add_command(label="End of Year")
+        menuBar.add_cascade(label="Entry", menu=entryMenu)
+        
+        # Add an Edit Menu
         reportMenu = Menu(menuBar, tearoff=0)
         reportMenu.add_command(label="Balance Sheet")
-        reportMenu.add_command(label="Ledger Account", command=lambda: self.do_showChart())
+        reportMenu.add_command(label="Ledger Account")
         reportMenu.add_command(label="Journal Transactions")
         reportMenu.add_command(label="Income Report")
         reportMenu.add_command(label="Expense Report")
