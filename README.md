@@ -32,9 +32,10 @@ Expenses       |   5xx     | | 520 Mortgage
 To debit a Debit Account is to increase it, similarly for crediting an Credit Account. Crediting a Debit Account reduces it and vis-a-versa. Addition and subtraction of figures are implied and automatic. That is what the program must do in the database table. Thus to balance accounts all debits have a credit somewhere and all credits have and offsetting debit - double entry.
   
   
+---
 
-  Project Repository maintained by David York.
+Project Repository maintained by David York.
   
-  Copyright Medmatix, David York 2018.
+Copyright Medmatix, David York 2018.
   
-  License under: MIT license.
+License under: MIT license.
