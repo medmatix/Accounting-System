@@ -1,6 +1,4 @@
-<img align="center"> 
 ![Accounting System](/images/Number_cruncherCr3.png)
-</img>
 
 # Accounting System
 
