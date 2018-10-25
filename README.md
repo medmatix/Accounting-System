@@ -35,7 +35,7 @@ To debit a Debit Account is to increase it, similarly for crediting an Credit Ac
   
   
 ## Implementation:
-Once the structure is decied on the creation of the database and it's tables behind the interface and enabling code guided the development. The SQLite Database and tables with keys and indexes are as follows.
+Once the structure is decied on the creation of the database and it's tables behind the interface and enabling code guided the development. The stored data must be clearly separated in development from the derived data. The latter are the reports and summaries also central to accounting, the balance sheet, revenue and expense reports and special or subsidiary journals which may play important parts in therereporting for some enterprises. The stored data which are SQLite Database and tables with keys and indexes are as follows.
 
 ### Tables of OpenAccounting.db:
 
@@ -46,7 +46,63 @@ Ref | Accounting Reference | Table
 3|The General Ledger | ledger
 4|The Accounting Annotation| accountmemos
 
----
+Eash table structure is shown by the SQL DDL statement that created it.
+
+#### Structure of chart Table
+
+'''
+CREATE TABLE chart (
+    Account  INTEGER     PRIMARY KEY
+                         NOT NULL,
+    Name     STRING (50) NOT NULL,
+    ActyType STRING (6)  NOT NULL,
+    Balance  REAL
+);
+'''
+
+#### Structure of journal Table
+
+'''
+CREATE TABLE journal (
+    [Transaction] INT         PRIMARY KEY
+                              NOT NULL,
+    Date          DATETIME    NOT NULL,
+    Time          DATETIME,
+    Description   STRING (40) NOT NULL,
+    DebitAccount  INTEGER (4) NOT NULL,
+    DebitAmount   REAL        NOT NULL,
+    CreditAccount INTEGER (4) NOT NULL,
+    CreditAmount  DECIMAL     NOT NULL,
+    Posted        BOOLEAN     NOT NULL
+                              DEFAULT (0) 
+);
+'''
+
+#### Structure of ledger Table
+
+'''
+CREATE TABLE ledger (
+    Account  INTEGER       NOT NULL,
+    Transact [INTEGER KEY] NOT NULL,
+    Amount   REAL          NOT NULL,
+    Balance  REAL          NOT NULL
+);
+'''
+
+#### Structure of accountmemos Table
+
+'''
+CREATE TABLE accountmemos (
+    MemoID        INTEGER  PRIMARY KEY
+                           UNIQUE
+                           NOT NULL,
+    [Transaction] INTEGER  REFERENCES journal ([Transaction]) 
+                           NOT NULL,
+    MemoDate      DATETIME NOT NULL,
+    Memo          BLOB     NOT NULL
+);
+'''  
+====
 
 Project Repository maintained by David York.
   
