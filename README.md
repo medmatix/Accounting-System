@@ -34,17 +34,17 @@ Expenses       |   5xx     | | 520 Mortgage
 To debit a Debit Account is to increase it, similarly for crediting an Credit Account. Crediting a Debit Account reduces it and vis-a-versa. Addition and subtraction of figures are implied and automatic. That is what the program must do in the database table. Thus to balance accounts all debits have a credit somewhere and all credits have and offsetting debit - double entry.
   
   
-##Implementation:
+## Implementation:
 Once the structure is decied on the creation of the database and it's tables behind the interface and enabling code guided the development. The SQLite Database and tables with keys and indexes are as follows.
 
-###Tables of OpenAccounting.db:
+### Tables of OpenAccounting.db:
 
 Ref | Accounting Reference | Table
 -----|----------------------|------------
 1|The Chart of Accounts | chart
 2|The General Journal | journal
 3|The General Ledger | ledger
-4|The Accounting Annotation| accoutmemos
+4|The Accounting Annotation| accountmemos
 
 ---
 
