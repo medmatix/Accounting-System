@@ -39,7 +39,7 @@ Once the structure is decied on the creation of the database and it's tables beh
 
 ###Tables of OpenAccounting.db:
 
-|Accounting Reference | Table
+Ref | Accounting Reference | Table
 -----|----------------------|------------
 1|The Chart of Accounts | chart
 2|The General Journal | journal
