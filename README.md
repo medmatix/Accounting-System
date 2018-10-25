@@ -1,4 +1,4 @@
-![Accounting System](images/AccountingSystemOrganization.png)
+![Accounting System](/images/Number_cruncherCr3.png)
 
 # Accounting System
 
