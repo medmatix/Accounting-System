@@ -1,6 +1,6 @@
-<p align="center"> 
+<img align="center"> 
 ![Accounting System](/images/Number_cruncherCr3.png)
-</p>
+</img>
 
 # Accounting System
 
