@@ -1,3 +1,5 @@
+![Accounting System](images/AccountingSystemOrganization.png)
+
 # Accounting System
 
 A basic accounting system compliant with Generally Accepted Accounting Practice (or Principles) (GAAP). It is written in python 3.7 and SQLite3.
