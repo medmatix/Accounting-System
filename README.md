@@ -50,7 +50,7 @@ Eash table structure is shown by the SQL DDL statement that created it.
 
 #### Structure of chart Table
 
-'''
+```
 CREATE TABLE chart (
     Account  INTEGER     PRIMARY KEY
                          NOT NULL,
@@ -58,11 +58,11 @@ CREATE TABLE chart (
     ActyType STRING (6)  NOT NULL,
     Balance  REAL
 );
-'''
+```
 
 #### Structure of journal Table
 
-'''
+```
 
 CREATE TABLE journal (
     [Transaction] INT         PRIMARY KEY
@@ -78,11 +78,11 @@ CREATE TABLE journal (
                               DEFAULT (0) 
 );
 
-'''
+```
 
 #### Structure of ledger Table
 
-'''
+```
 
 CREATE TABLE ledger (
     Account  INTEGER       NOT NULL,
@@ -91,11 +91,11 @@ CREATE TABLE ledger (
     Balance  REAL          NOT NULL
 );
 
-'''
+```
 
 #### Structure of accountmemos Table
 
-'''
+```
 
 CREATE TABLE accountmemos (
     MemoID        INTEGER  PRIMARY KEY
@@ -107,7 +107,8 @@ CREATE TABLE accountmemos (
     Memo          BLOB     NOT NULL
 );
 
-'''  
+```
+
 ====
 
 Project Repository maintained by David York.
