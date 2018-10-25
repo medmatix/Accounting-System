@@ -38,6 +38,8 @@ To debit a Debit Account is to increase it, similarly for crediting an Credit Ac
 Once the structure is decied on the creation of the database and it's tables behind the interface and enabling code guided the development. The SQLite Database and tables with keys and indexes are as follows.
 
 ###Tables of OpenAccounting.db:
+
+|Accounting Reference | Table
 -----|----------------------|------------
 1|The Chart of Accounts | chart
 2|The General Journal | journal
