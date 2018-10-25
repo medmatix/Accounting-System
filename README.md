@@ -22,7 +22,7 @@ Thus the Journal is where data enters the system and is the date-time record of 
 
 The underlying categorization is defined by a set of accounts to which activities are attributated. This is kept in the Chart of Accounts. In modern American GAAP there are five essential accounts aways present as prinary accounts with variable kinds of subsidiary accounts providing a detailed breakdown of these five. These in the US, Canada and the UK are 1) Assets Account, 2) Liabilities Account, 3) Equity or Capital Accounts, 4) Revenue or Income Account and 5) Expense of Costs Account. There is usually some way to remove bad data or expired value from the system. This sixth account or Disposables (6) is how depreciated value, bad debts and perhaps erroneous data, can be removed from the system in a clearly demonstrable and auditable way. 
   
-Often the write--ff are kept as an account in expenses as the result of their access is to expense a bad dept of similar business losses. It is more difficult to retrieve expensed write-offs in a future accounting cycle however so there are advantages to retained write-offs in their own ledger.
+Often the write-offs are kept as an account in expenses as the result of their access is to expense a bad dept of similar business losses. It is more difficult to retrieve expensed write-offs in a future accounting cycle however so there are advantages to retained write-offs in their own ledger.
   
 DEBIT ACCOUNTS | NUMBERING | CREDIT ACCOUNTS | EXAMPLES
 ---------------|-----------|-----------------|-----------------------------
