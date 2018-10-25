@@ -63,6 +63,7 @@ CREATE TABLE chart (
 #### Structure of journal Table
 
 '''
+
 CREATE TABLE journal (
     [Transaction] INT         PRIMARY KEY
                               NOT NULL,
@@ -76,22 +77,26 @@ CREATE TABLE journal (
     Posted        BOOLEAN     NOT NULL
                               DEFAULT (0) 
 );
+
 '''
 
 #### Structure of ledger Table
 
 '''
+
 CREATE TABLE ledger (
     Account  INTEGER       NOT NULL,
     Transact [INTEGER KEY] NOT NULL,
     Amount   REAL          NOT NULL,
     Balance  REAL          NOT NULL
 );
+
 '''
 
 #### Structure of accountmemos Table
 
 '''
+
 CREATE TABLE accountmemos (
     MemoID        INTEGER  PRIMARY KEY
                            UNIQUE
@@ -101,6 +106,7 @@ CREATE TABLE accountmemos (
     MemoDate      DATETIME NOT NULL,
     Memo          BLOB     NOT NULL
 );
+
 '''  
 ====
 
