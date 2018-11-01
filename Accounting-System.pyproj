@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{36b71360-ba1b-4c61-be93-2b584588523e}</ProjectGuid>
+    <ProjectHome />
+    <StartupFile>OpenAccounting.py</StartupFile>
+    <SearchPath />
+    <WorkingDirectory>.</WorkingDirectory>
+    <OutputPath>.</OutputPath>
+    <ProjectTypeGuids>{888888a0-9f3d-457c-b088-3a5042f75d52}</ProjectTypeGuids>
+    <LaunchProvider>Standard Python launcher</LaunchProvider>
+    <InterpreterId />
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'" />
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'" />
+  <PropertyGroup>
+    <VisualStudioVersion Condition=" '$(VisualStudioVersion)' == '' ">10.0</VisualStudioVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <Content Include="AccountingSystemOrganization.png" />
+    <Content Include="images\AccountingSystemOrganization.png" />
+    <Content Include="images\medmatix.ico" />
+    <Content Include="images\medmatix.png" />
+    <Content Include="images\medmatix_tilt.ico" />
+    <Content Include="images\medmatix_tilt.png" />
+    <Content Include="images\Number_cruncherCr3.ico" />
+    <Content Include="images\Number_cruncherCr3.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="OpenAccounting.py" />
+    <Compile Include="Tooltips.py" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="images" />
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
+</Project>

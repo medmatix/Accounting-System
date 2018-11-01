@@ -4,6 +4,7 @@ Created on Oct 17, 2018
 @summary: An open source double entry accounting system based on SQLite and written in python
 @note: Project pages at: https://medmatix.github.io/Accounting-System/
 @author: David York
+@version: 0.15
 @copyright: David A York 2018
 @license: MIT
 @contact: http://crunches-data.appspot.com/contact.html
@@ -20,183 +21,17 @@ from tkinter import scrolledtext
 from tkinter import Menu
 from tkinter import messagebox as mBox
 from tkinter import simpledialog
+from tkinter import Scrollbar
 from tkinter import Canvas
 from tkinter import font
 import sys
 
 # Custom module imports
-from Tooltips import createToolTip, ToolTip as tip
+from AccountDB import AccountDB
+from FormDialogs import insertJournalForm, insertChartForm, insertMemoForm
+from Tooltips import createToolTip, ToolTip
 
-# #######################################################
-# Classes, Independently constructed Forms, Dialogs etc
-# #######################################################
-'''
-Classes, External, independently constructed Forms, Dialogs etc
-'''
-class insertJournalForm(object):
-    '''
-    class insertion Form to build and display for journal access
-    @summary: A form to collect journal item data to add to journal table,. A Part of Accounting System application
-    @see: refer to main module (AccountingSystem) documentation
-    created: Oct 17, 2018
-        @
-    '''
-    def __init__(self, goal):
-        '''
-        Constructor for Add data dialog window
-        '''
-        
-        # Create instance
-        self.goal=goal
-        self.frm = tk.Tk()
-        # Add a title
-        self.frm.title("Insert a Journal Entry")
-        self.journalForm()
-        self.frm.mainloop() 
-        
-    
-        
 
-    def journalForm(self):
-        ''' The form for journal access'''
-        lbfr = ttk.LabelFrame(self.frm, text=' Input Form ')
-        lbfr.grid(column=0, row=0, padx=10, pady=10, sticky='W')
-        self.lbl0 = tk.Label(lbfr, text="Transaction").grid(column=0, row=0)
-        self.e0 = tk.Entry(lbfr, width=16)
-        self.e0.grid(column=1, row=0, padx=5, pady=4, sticky='W')
-        self.lbl1 = tk.Label(lbfr, text="Date").grid(column=0, row=1)
-        self.e1 = tk.Entry(lbfr,width=10)
-        self.e1.grid(column=1, row=1, padx=5, pady=4, sticky='W')
-        self.lbl2 = tk.Label(lbfr, text="Time").grid(column=0, row=2)
-        self.e2 = tk.Entry(lbfr,width=9)
-        self.e2.grid(column=1, row=2, padx=5, pady=4, sticky='W')
-        self.lbl3 = tk.Label(lbfr, text="Description").grid(column=0, row=3)
-        self.e3 = tk.Entry(lbfr,width=50)
-        self.e3.grid(column=1, row=3, padx=5, pady=4, sticky='W')
-        self.lbl4 = tk.Label(lbfr, text="DebitAccount").grid(column=0, row=4)
-        self.e4 = tk.Entry(lbfr,width=4)
-        self.e4.grid(column=1, row=4, padx=5, pady=4, sticky='W')
-        self.lbl5 = tk.Label(lbfr, text="DebitAmount").grid(column=0, row=5)
-        self.e5 = tk.Entry(lbfr,width=8)
-        self.e5.grid(column=1, row=5, padx=5, pady=4, sticky='W')
-        self.lbl6 = tk.Label(lbfr, text="CreditAccount").grid(column=0, row=6)
-        self.e6 = tk.Entry(lbfr,width=4)
-        self.e6.grid(column=1, row=6, padx=5, pady=4, sticky='W')
-        self.lbl7 = tk.Label(lbfr, text="CreditAmount").grid(column=0, row=7)
-        self.e7 = tk.Entry(lbfr,width=8)
-        self.e7.grid(column=1, row=7, padx=5, pady=4, sticky='W')
-        
-        self.btn1 = ttk.Button(lbfr, text="Commit", command=lambda: self.on_click()).grid(column=0,row=9,padx=8, pady=4, sticky='W')
-        self.btn2 = ttk.Button(lbfr, text="Cancel", command=lambda: self.on_cancel()).grid(column=1,row=9,padx=8, pady=4, sticky='W')
-        
-    def on_click(self):
-        '''Save new Journal Entry and update Ledger accounts
-        '''
-        # get debit account balance
-        daccount = int(self.e4.get())   
-        txType = 'DEBIT'     
-        debitBalance = AccountingSystem.getAccountBalance(self,daccount)
-        debitSgn = AccountingSystem.getsgnAdjust(self,daccount,txType)
-        debitAmount = debitSgn * round(float(self.e7.get()),2)
-        # get credit  account balance
-        caccount = int(self.e6.get())
-        txType = 'CREDIT'         
-        creditBalance= AccountingSystem.getAccountBalance(self, caccount)
-        creditSgn = AccountingSystem.getsgnAdjust(self, caccount,txType)
-        creditAmount = creditSgn * round(float(self.e5.get()),2)
-        newDBalance=(debitBalance + debitAmount)
-        newCBalance=(creditBalance + creditAmount)
-        posted = 1
-        jrow = (int(self.e0.get()), self.e1.get(), self.e2.get(), self.e3.get(), int(self.e4.get()), debitAmount, int(self.e6.get()),creditAmount, posted)
-        lDRow = (int(self.e4.get()),int(self.e0.get()), debitAmount, newDBalance)
-        lCRow = (int(self.e6.get()),int(self.e0.get()), creditAmount, newCBalance)
-        ''' the activation of the form'''
-        if (abs(creditAmount) == abs(debitAmount)):
-            print("commit")
-            print(jrow)
-            AccountingSystem.insertJournalEntry(self, jrow)
-            print(lDRow)
-            lrow = lDRow
-            AccountingSystem.insertLedgerEntry(self, lrow)
-            print(lCRow)
-            lrow = lCRow
-            AccountingSystem.insertLedgerEntry(self, lrow)
-            AccountingSystem.updateChartBalance(self, daccount, newDBalance)
-            AccountingSystem.updateChartBalance(self, caccount, newCBalance)
-            print("journalForm closed")
-            self.frm.destroy()
-        else:
-            print("ERROR: Credits and Debits do not balance")
-        
-    def on_cancel(self):
-        print("Cancelled action")
-        self.frm.destroy()
-        
-class insertChartForm(object):
-    '''
-    class insertion Form for build and display Chart of Account access
-    @summary: A form to collect movie data to add to list, and send to addMovietoList function. A Part of MomsMovies application
-    @see: refer to main module (MomsMovies) documentation
-    created: Oct 14, 2018
-        @
-    '''
-    def __init__(self, goal):
-        '''
-        Constructor for Add New Account dialog window
-        '''
-        
-        # Create instance
-        self.frm = tk.Tk()
-        # Add a title
-        self.frm.title("Add Entry into Chart of Accounts")
-        self.chartForm()
-        self.frm.mainloop() 
-                
-    def chartForm(self):
-        ''' The form for Chart of Account access '''
-        lbfr = ttk.LabelFrame(self.frm, text=' Input Form ')
-        lbfr.grid(column=0, row=0, padx=10, pady=10, sticky='W')
-        self.lbl0 = tk.Label(lbfr, text="Account").grid(column=0, row=0)
-        self.e0 = tk.Entry(lbfr, width=16)
-        self.e0.grid(column=1, row=0, padx=5, pady=4, sticky='W')
-        self.lbl2 = tk.Label(lbfr, text="Name").grid(column=0, row=2)
-        self.e2 = tk.Entry(lbfr,width=50)
-        self.e2.grid(column=1, row=2, padx=5, pady=4, sticky='W')
-        self.lbl3 = tk.Label(lbfr, text="Type of Account").grid(column=0, row=3)
-        self.e3 = tk.Entry(lbfr,width=6)
-        self.e3.grid(column=1, row=3, padx=5, pady=4, sticky='W')
-        self.lbl4 = tk.Label(lbfr, text="Starting Balance").grid(column=0, row=4)
-        self.e4 = tk.Entry(lbfr,width=10)
-        self.e4.grid(column=1, row=4, padx=5, pady=4, sticky='W')
-                
-        self.btn1 = ttk.Button(lbfr, text="Commit", command=lambda: self.on_click()).grid(column=0,row=7,padx=8, pady=4, sticky='W')
-        self.btn2 = ttk.Button(lbfr, text="Cancel", command=lambda: self.on_cancel()).grid(column=1,row=7,padx=8, pady=4, sticky='W')
-        
-    def on_click(self):
-        account = self.e0.get()
-        if(account in (100,200,300,400,500,120,220,320)):
-            print("ERROR, account is system reserved account, do not use.")
-            self.on_cancel()
-        # Check if account exits
-        if (self.e0.get() == ''): 
-            self.on_cancel()
-        else:    
-            account = int(self.e0.get())
-            existAccount = AccountingSystem.existChartAccount(self,account)
-            row = (int(self.e0.get()), self.e2.get(), self.e3.get(), self.e4.get())
-            ''' the activation of the form'''
-            if (not existAccount):
-                print("commit")
-                print(row)
-                AccountingSystem.insertChartAccount(self, row)
-                print("journalForm closed")
-                self.frm.destroy()
-            else:
-                print("ERROR: An Account Already Exists with this Number")
-        
-    def on_cancel(self):
-        print("Cancelled action")
-        self.frm.destroy()   
  
 class AccountingSystem():
     '''
@@ -218,198 +53,7 @@ class AccountingSystem():
         # Initialize widgets
         self.createWidgets()    
         
-    
-    # #################################
-    # Database Functions
-    # ################################# 
-    
-      
-    def createAccounts(self):
-        '''
-        Create New Database and Tables if not existing
-        @summary: Creates a fully new accounting set-up. The System accounts are 
-            fixed by accounting convention and may not be changed of reused for 
-            other purposes.
-        @warning: Will not allow overwriting so any old data tables should be moved from the directory.
-        '''
-        # Check that a fully new set-up is intended
-        proceedAnswer = mBox.askyesno("Initial Set-up","This is The New System Set-up.\nThere should be no old data tables in directory,\n Proceed?")
-        if (not proceedAnswer):
-            print('aborted new setup')
-            return
-        # Some local, set-up related message boxes
-        def setupError(self):
-            mBox.showerror(title='Set-up Error', message='Chart of Accounts already populated, you may not overwrite')
-        def setupInfo(self):
-            mBox.showinfo('Set-up Information' , 'Adding System Accounts to Chart of Accounts.') 
-        
-        #If Not Existing, Create batabase, data tables and system ledger accounts  
-        db = sqlite3.connect('OpenAccounting.db')
-        db.execute('''CREATE TABLE IF NOT EXISTS journal 
-            (Transact INTEGER PRIMARY KEY NOT NULL, 
-            Date DATETIME NOT NULL, 
-            Description STRING(50) NOT NULL, 
-            DebitAccount INT(4) NOT NULL,  
-            CreditAccount INT(4) NOT NULL, 
-            Amount DECIMAL NOT NULL)''')
-        
-        db.execute('''CREATE TABLE IF NOT EXISTS ledger 
-            (Account INTEGER     NOT NULL, 
-            Transact INTEGER     KEY NOT NULL, 
-            Amount REAL    NOT NULL, 
-            Balance REAL    NOT NULL)''')
-        
-        db.execute('''CREATE TABLE IF NOT EXISTS chart 
-            (Account INTEGER PRIMARY KEY    NOT NULL, 
-            Name STRING(60)    NOT NULL, 
-            Type STRING(10)    NOT NULL,
-            Balance REAL       NOT NULL)''')
-        
-        db.execute('''CREATE TABLE IF NOT EXISTS accountmemos 
-            (MemoID INTEGER PRIMARY KEY    NOT NULL,
-            Transact INTEGER    NOT NULL,
-            Date DATETIME    NOT NULL, 
-            Memo BLOB    NOT NULL)''')
-        
-        # Check if Chart of Accounts already set-up, may not be overwritten
-        count = db.execute("SELECT count(Account) FROM chart")
-        for row in count:
-            tableFull=bool(row[0])
-        if (not tableFull):
-            setupInfo(self)
-            db.execute('''INSERT INTO chart VALUES (100, "ASSETS", "DEBIT", 0),
-                (120, "RECEIVABLES","DEBIT",0),
-                (200, "LIABILITIES","CREDIT",0), 
-                (220, "PAYABLES","CREDIT",0), 
-                (300, "EQUITY","CREDIT",0),  
-                (400, "REVENUE","CREDIT",0),
-                (500, "EXPENSES","DEBIT",0)        
-                ''')      
-            db.commit()  
-        else:
-            setupError(self)
-        
-        db.close()
-        
-    def getChartAccounts(self):
-        '''
-        Return all Chart of Accounts
-        '''
-        chart = list() 
-        db = sqlite3.connect('OpenAccounting.db')
-        cursor = db.cursor()
-        cursor.execute("SELECT * FROM chart ORDER BY Account")
-        for row in cursor:            
-            chart.append(row)        
-        db.close()
-        return chart
-    
-    def existChartAccount(self, account):
-        '''
-        '''
-        pass
-    
-    def getLedgerAccount(self,account):
-        '''
-        Return all entries for an account
-        '''
-        ledger = list() 
-        db = sqlite3.connect('OpenAccounting.db')
-        cursor = db.cursor()
-        if account == 0:
-            cursor.execute("SELECT * FROM ledger ORDER BY Account")
-        else:
-            cursor.execute("SELECT * FROM ledger WHERE Account = {} ORDER BY Transact".format(account,))
-        for row in cursor:            
-            ledger.append(row)        
-        db.close()
-        return ledger
-    
-    def getJournalEntries(self, jDates):
-        '''
-        Return all of a journal date range
-        '''
-        journal = list() 
-        db = sqlite3.connect('OpenAccounting.db')
-        cursor = db.cursor()
-        if jDates == (0,0):
-            cursor.execute("SELECT * FROM journal ORDER BY Date")
-        else:
-            cursor.execute("SELECT * FROM journal WHERE Date = {} ORDER BY Transact".format(jDates[0]))
-        for row in cursor:            
-            journal.append(row)        
-        db.close()
-        return journal
-    
-    def insertJournalEntry(self, jrow):
-        '''
-        Insert an entry into Journal
-        '''
-        db = sqlite3.connect('OpenAccounting.db')
-        db.execute("INSERT INTO journal VALUES {}".format(jrow))
-        db.commit()
-        db.close()
-        
-    def insertLedgerEntry(self, lrow):
-        '''
-        Post journal debit or credit to Ledger
-        '''
-        db = sqlite3.connect('OpenAccounting.db')
-        db.execute("INSERT INTO ledger VALUES {}".format(lrow))
-        db.commit()
-        db.close()
-    
-    def insertChartAccount(self, row):
-        '''
-        Update an Balance into Chart Account
-        '''
-        db = sqlite3.connect('OpenAccounting.db')
-        db.execute("INSERT INTO chart VALUES {}".format(row))
-        db.close()
-    
-    def updateChartBalance(self, account, balance):  # Account balance in chart of accounts
-        db = sqlite3.connect('OpenAccounting.db')
-        cursor = db.cursor()
-        cursor.execute("UPDATE Chart SET Balance = {} WHERE Account = {}".format(balance, account))
-        db.commit()
-        db.close()
-        
-    def getAccountBalance(self,laccount):
-        '''
-        Get LAST ledger balance for specified account
-        '''
-        balance = list() 
-        db = sqlite3.connect('OpenAccounting.db')
-        cursor = db.cursor()
-        cursor.execute("SELECT Balance FROM Chart WHERE Account = {}".format(laccount,))
-        for row in cursor:            
-            balance.append(row) 
-        oldBalance = balance[0][0]     
-        db.close()
-        return oldBalance
-    
-    def getsgnAdjust(self, laccount, txType):
-        actyType = list()
-        db = sqlite3.connect('OpenAccounting.db')
-        cursor = db.cursor()
-        cursor.execute("SELECT actyType FROM Chart WHERE Account = {}".format(laccount,))
-        for row in cursor:            
-            actyType.append(row)
-        if (txType=='DEBIT' and actyType=='DEBIT') or (txType=='CREDIT' and actyType=='CREDIT' ):            
-            db.close()
-            return 1
-        else:
-            db.close()            
-            return -1
-        
-        # return balance
-        
-    def packDatabase(self):
-        db = sqlite3.connect('OpenAccounting.db')
-        mBox.showinfo('Maintenance' , 'PACKING Database for Clean-up, Defragmentation and Improved Performance.')
-        db.execute('VACUUM')        
-        db.close()
-        
+
     # #################################
     # GUI callback functions 
     # #################################   
@@ -422,7 +66,7 @@ class AccountingSystem():
         
     def do_showChart(self):
         self.scrolList3.delete(1.0,tk.END)
-        listAll = self.getChartAccounts()
+        listAll = AccountDB.getChartAccounts(self)
         for row in listAll:
             #self.do_formatedList(row) 
             self.scrolList3.insert(tk.END,row[0])
@@ -447,7 +91,7 @@ class AccountingSystem():
         self.scrolList2.delete(1.0,tk.END)
         account = int(account)
 
-        listAll = self.getLedgerAccount(account)
+        listAll = AccountDB.getLedgerAccount(self,account)
         for row in listAll:
             #self.do_formatedList(row) 
             self.scrolList2.insert(tk.END,row[0])
@@ -473,7 +117,7 @@ class AccountingSystem():
         Show formatted journal
         '''  
         self.scrolList1.delete(1.0,tk.END)
-        listAll = self.getJournalEntries(jDates)
+        listAll = AccountDB.getJournalEntries(self,jDates)
         for row in listAll:
             self.scrolList1.insert(tk.END,row[0])
             self.scrolList1.insert(tk.END,'\t')
@@ -512,48 +156,267 @@ class AccountingSystem():
             mcAmount = mcAmount.rjust(camountLength)
             self.scrolList1.insert(tk.END,mcAmount)
             self.scrolList1.insert(tk.END,'\n')
+        
+    def do_reptTransact(self, jTransact):
+        '''
+        Show formatted journal transaction
+        font conversion factor is 7 = 10pt
+        '''       
+        self.win.update()
+        self.tab4.focus_force()
+        self.tabControl.update()
+        self.tab4.lift(aboveThis=None)
+        self.tabControl.update()
+        transaction = AccountDB.getJournalTransact(self,jTransact)
+        self.reportWin.delete("all")
+        self.reportWin.create_text(10,18,anchor=tk.NW, text='Transaction: ')        
+        self.reportWin.create_text(112,18,anchor=tk.NW, text='Date')
+        self.reportWin.create_text(189,18,anchor=tk.NW, text='Time')
+        self.reportWin.create_text(252,18,anchor=tk.NW, text='Description')
+        self.reportWin.create_text(522,18,anchor=tk.NW, text='Debit')
+        self.reportWin.create_text(606,18,anchor=tk.NW, text='Credit')
+        cline = 18
+        cline = cline + 20
+        self.reportWin.create_line(10,cline, 670,cline, fill="blue")
+        cline = cline + 3
+        self.reportWin.create_line(10,cline, 670,cline, fill="blue")
+        for row in transaction:
+            cline = cline + 13
+            mTransact = str(row[0])
+            transactLength = 16                # 16 x 7 = 112
+            mTransact = mTransact.ljust(transactLength)
+            self.reportWin.create_text(10,cline,anchor=tk.NW, text=mTransact)
+            mDate  = row[1]
+            #mDate ="2018-10-24"
+            dateLength = 11                # 11 x 7 = 77
+            mDate = mDate.ljust(dateLength)
+            self.reportWin.create_text(112,cline,anchor=tk.NW, text=mDate)
+            mTime  = row[2]
+            #mTime = "12:40:00"
+            timeLength = 9                  # 9 x 7 = 63
+            mTime = mTime.ljust(timeLength)
+            self.reportWin.create_text(189,cline,anchor=tk.NW, text=mTime)
+            mDescription = row[3]
+            #mDescription ="Pay bills"       # 30 x 9 = 270
+            descLength = len(mDescription)+(30-len(mDescription))
+            mDescription = mDescription.ljust(descLength)
+            self.reportWin.create_text(252,cline,anchor=tk.NW, text=mDescription)
+            mdAccount = str(row[4])
+            #mdAccount = "100"               # 4 x 7 =28
+            daccountLength = len(mdAccount)+(4-len(mdAccount))
+            mdAccount = mdAccount.ljust(daccountLength)
+            self.reportWin.create_text(522,cline,anchor=tk.NW, text=mdAccount)
+            mdAmount = str(round(row[5],2))
+            #mdAmount = "-24.91 "            # 8 x 7 = 56
+            damountLength = len(mdAmount)+(8-len(mdAmount))
+            mdAmount = mdAmount.rjust(damountLength)
+            self.reportWin.create_text(550,cline,anchor=tk.NW, text=mdAmount)
+            mcAccount = str(row[6])
+            #mcAccount = "220"
+            caccountLength = len(mcAccount)+(4-len(mcAccount))
+            mcAccount = mcAccount.ljust(caccountLength)
+            self.reportWin.create_text(606,cline,anchor=tk.NW, text=mcAccount)
+            mcAmount = str(round(row[7],2))
+            #mcAmount = "-24.91 "
+            camountLength = len(mcAmount)+(8-len(mcAmount))
+            mcAmount = mcAmount.rjust(camountLength)
+            self.reportWin.create_text(634,cline,anchor=tk.NW, text=mcAmount)
             
+        cline = cline + 20
+        self.reportWin.create_line(10,cline, 670,cline, fill="blue")
+        cline = cline + 3
+        self.reportWin.create_line(10,cline, 670,cline, fill="blue")
+        if (int(jTransact) != 0):
+            '''
+            If only a single transaction is to be reported, 
+            then include all associated accounting memos with it
+            '''
+            memo = AccountDB.getTransactMemo(self,jTransact)
+            cline = cline + 26
+            self.reportWin.create_text(10,cline,anchor=tk.NW, text='Memos')
+            cline = cline + 13
+            self.reportWin.create_text(10,cline,anchor=tk.NW, text='Number')        
+            self.reportWin.create_text(112,cline,anchor=tk.NW, text='Date')
+            self.reportWin.create_text(189,cline,anchor=tk.NW, text='Time')
+            for mrow in memo:
+                cline = cline + 13
+                memoDate  = mrow[2]
+                dateLength = 11                # 11 x 7 = 77
+                memoDate = memoDate.ljust(dateLength)
+                self.reportWin.create_text(112,cline,anchor=tk.NW, text=memoDate)
+                
+                cline = cline + 13
+                memoID  = mrow[0]
+                self.reportWin.create_text(10,cline,anchor=tk.NW, text=memoID)
+                memoText  = mrow[3]
+                self.reportWin.create_text(55,cline,anchor=tk.NW, text=memoText)
+                    
+    def do_reptChart(self):
+        '''
+        '''        
+        self.win.update()
+        self.tab4.focus_force()
+        self.tabControl.update()
+        self.tab4.lift(aboveThis=None)
+        self.tabControl.update()
+        chartAcct=AccountDB.getChartAccounts(self)       
+        self.reportWin.delete("all")
+        self.reportWin.create_text(5,18,anchor=tk.NW, text='Account')  
+        self.reportWin.create_text(56,18,anchor=tk.NW, text='Description')
+        self.reportWin.create_text(420,18,anchor=tk.NW, text='Type')
+        self.reportWin.create_text(485,18,anchor=tk.NW, text='Balance')
+        cline = 18
+        cline = cline + 20
+        self.reportWin.create_line(10,cline, 670,cline, fill="blue")
+        cline = cline + 3
+        self.reportWin.create_line(10,cline, 670,cline, fill="blue")
+        for row in chartAcct:
+            cline = cline + 13
+            maccount = str(row[0])        
+            maccountLength = len(maccount)+(4-len(maccount))    # 4 x 7 =28
+            maccount = maccount.ljust(maccountLength)
+            self.reportWin.create_text(10,cline,anchor=tk.NW, text=maccount)
+            mDescription = row[1]
+            descLength = len(mDescription)+(30-len(mDescription))
+            mDescription = mDescription.ljust(descLength)
+            self.reportWin.create_text(56,cline,anchor=tk.NW, text=mDescription)
+            mType = row[2]       
+            mTypeLength = len(mType)+(8-len(mType))     # 6 x 7 = 42
+            mType = mType.rjust(mTypeLength)
+            self.reportWin.create_text(420,cline,anchor=tk.NW, text=mType)
+            mBalance = str(round(row[3],2))        
+            mbalanceLength = len(mBalance)+(8-len(mBalance))     # 8 x 7 = 56
+            mBalance = mBalance.rjust(mbalanceLength)
+            self.reportWin.create_text(485,cline,anchor=tk.NW, text=mBalance)
+        cline = cline + 20
+        self.reportWin.create_line(10,cline, 670,cline, fill="blue")
+        cline = cline + 3
+        self.reportWin.create_line(10,cline, 670,cline, fill="blue")
+    
+    def do_reptLedger(self, account):
+        '''
+        '''
+        self.win.update()
+        self.tab4.focus_force()
+        self.tabControl.update()
+        self.tab4.lift(aboveThis=None)
+        self.tabControl.update()
+        ledgerAcct=AccountDB.getLedgerAccount(self,account)        
+        self.reportWin.delete("all")
+        self.reportWin.create_text(5,18,anchor=tk.NW, text='Account')  
+        self.reportWin.create_text(56,18,anchor=tk.NW, text='Transaction: ')        
+        # self.reportWin.create_text(150,18,anchor=tk.NW, text='Date')
+        # self.reportWin.create_text(196,18,anchor=tk.NW, text='Time')
+        self.reportWin.create_text(150,18,anchor=tk.NW, text='Description')
+        self.reportWin.create_text(420,18,anchor=tk.NW, text='Amount')
+        self.reportWin.create_text(485,18,anchor=tk.NW, text='Balance')
+        cline = 18
+        cline = cline + 20
+        self.reportWin.create_line(10,cline, 670,cline, fill="blue")
+        cline = cline + 3
+        self.reportWin.create_line(10,cline, 670,cline, fill="blue")
+        for row in ledgerAcct:
+            cline = cline + 13
+            maccount = str(row[0])        
+            maccountLength = len(maccount)+(4-len(maccount))    # 4 x 7 =28
+            maccount = maccount.ljust(maccountLength)
+            self.reportWin.create_text(10,cline,anchor=tk.NW, text=maccount)
+            mTransact = str(row[1])
+            transactLength = 16                                 # 16 x 7 = 112
+            mTransact = mTransact.ljust(transactLength)
+            self.reportWin.create_text(62,cline,anchor=tk.NW, text=mTransact)
+            mAmount = str(round(row[2],2))        
+            mamountLength = len(mAmount)+(8-len(mAmount))     # 8 x 7 = 56
+            mAmount = mAmount.rjust(mamountLength)
+            self.reportWin.create_text(420,cline,anchor=tk.NW, text=mAmount)
+            mBalance = str(round(row[3],2))        
+            mbalanceLength = len(mBalance)+(8-len(mBalance))     # 8 x 7 = 56
+            mBalance = mBalance.rjust(mbalanceLength)
+            self.reportWin.create_text(485,cline,anchor=tk.NW, text=mBalance)
+        cline = cline + 20
+        self.reportWin.create_line(10,cline, 670,cline, fill="blue")
+        cline = cline + 3
+        self.reportWin.create_line(10,cline, 670,cline, fill="blue")
+              
     # #################################
     # Other Control Functions etc.
     # #################################
+    
+    def click_on_widget(self, widget, button=1):
+        widget.focus_force()
+        self.win.update()
+        widget.event_generate("<Button-{}>".format(button))
+        self.win.update()
+
     def newMemo(self):
         '''
         Method to start a new accounting memo
         '''
         proceedAnswer = mBox.askyesno("New Memo","Save current memo and start a new one?")
-        pass
+        if proceedAnswer==True:
+            '''
+            Insert an entry into Journal
+            '''
+            id = int(self.ememoID.get())
+            transact = int(self.ememoTransact.get())
+            memo=str(self.scr_memo.get(1.0,tk.END))
+            row = (id, transact,self.ememoDate.get(),memo)
+            try:
+                AccountDB.insertAccountMemos(row)
+            except:
+                print("not saved, probable duplicate memo")
+            # clear the memo
+            self.scr_memo.delete(1.0,tk.END)
+            self.scr_memo.see(tk.END)
+            print('cleared the notes pad')
+        else:
+            pass
     
     def printMemo(self):
         '''
         Method to Print a selected accounting memo        
         '''
         proceedAnswer = mBox.askyesno("print Memo","Send the current memo to the printer?")
-        pass
+        if proceedAnswer==True:
+            pass
+        else:
+            pass
     
     def saveMemo(self):
         '''
         Method to save the current accounting memo
         '''
         proceedAnswer = mBox.askyesno("Save Memo","Save current memo and continue?")
-        pass
+        if (proceedAnswer):
+            '''
+            Save a Memo 
+            '''
+            mid = int(self.ememoID.get())
+            transact = int(self.ememoTransact.get())
+            memo=str(self.scr_memo.get(1.0,tk.END))
+            row = (mid, transact,self.ememoDate.get(),memo)
+            try:
+                AccountDB.insertAccountMemos(row)
+            except:
+                print("not saved, probable duplicate memo")
+          
     
     def fetchMemo(self):
         '''
         Method to fetch a selected accounting memo
         '''
-        proceedAnswer = mBox.askyesno("Get a Memo","Fetch a Previous Memo?")
-        pass
+        answer1 = simpledialog.askstring("Input", "How Do you want to retrieve, MemoNo or Date-Transact", parent=self.win)
+        if answer1=="MemoNo":
+            answer2 = simpledialog.askstring("Input", "Enter the Memo ID Number", parent=self.win)
+        elif answer1=="Date-Transact":
+            answer2 = simpledialog.askstring("Input", "Enter Date and Transaction (separated by a comma", parent=self.win)
+        else:
+            pass
     
     def do_balSheet(self):
         '''
         '''
         proceedAnswer = mBox.askyesno("Balance Sheet Report","Prepare report now?")
-        pass
-    
-    def do_journalRpt(self):
-        '''
-        '''
-        proceedAnswer = mBox.askyesno("Journal Report","Prepare report now?")
         pass
     
     def do_LedgerAcct(self):
@@ -562,12 +425,7 @@ class AccountingSystem():
         proceedAnswer = mBox.askyesno("Ledger Account Report","Prepare report now?")
         pass
     
-    def list_Accounts(self):
-        '''
-        '''
-        proceedAnswer = mBox.askyesno("List of Accounts Report","Prepare report now?")
-        pass
-    
+       
     def do_RevandExp(self):
         '''
         '''
@@ -587,112 +445,147 @@ class AccountingSystem():
         
         
         
-        def getLedgerAccount(self):
-            answer = simpledialog.askstring("Input", "What Account Number to retrieve?", parent=self.win)
+        def fetchLedgerAccount(self):
+            answer = simpledialog.askstring("Get Ledger Account", "What Account Number to retrieve?", parent=self.win)
             if answer is not None:
-                self.do_showLedger(answer)
+                self.do_reptLedger(answer)
             else:
                 print("No Value entered")
                 return 0
             
         def getJournalDates(self):
-            answer = simpledialog.askstring("Input", "Start and End Date for Journal Retrieval\n, a comma separated pair", parent=self.win)
+            answer = simpledialog.askstring("Get Journal Range", "Start and End Date for Journal Retrieval\n, a comma separated pair", parent=self.win)
             if answer is not None:
                 jDates = (answer,)
                 self.do_showJournal((jDates))
             else:
                 print("No Value entered")
                 return 0
-           
-        # Tab Controls created here --------------------------------------
-        tabControl = ttk.Notebook(self.win)     # Create Tab Controls
+        
+        def getTransact(self):
+            answer = simpledialog.askstring("Get Transaction", "Transaction to retrieve?\n\nEnter a Transaction Number\n 0 for all \n", parent=self.win)
+            if answer is not None:
+                jTransact = (answer)
+                self.do_reptTransact(jTransact)                
+            else:
+                print("No Value entered")
+                return 0
 
-        tab1 = ttk.Frame(tabControl)
-        tabControl.add(tab1, text='Journal')
+            
+        # Tab Controls created here --------------------------------------
+        self.tabControl = ttk.Notebook(self.win)     # Create Tab Controls
+
+        self.tab1 = ttk.Frame(self.tabControl)
+        self.tabControl.add(self.tab1, text='Journal')
                 
-        tab2 = ttk.Frame(tabControl)
-        tabControl.add(tab2, text='Ledger')
+        self.tab2 = ttk.Frame(self.tabControl)
+        self.tabControl.add(self.tab2, text='Ledger')
         
-        tab3 = ttk.Frame(tabControl)
-        tabControl.add(tab3, text='Chart of Accounts')
+        self.tab3 = ttk.Frame(self.tabControl)
+        self.tabControl.add(self.tab3, text='Chart of Accounts')
         
-        tab4 = ttk.Frame(tabControl)
-        tabControl.add(tab4, text='Reports')
+        self.tab4 = ttk.Frame(self.tabControl)
+        self.tabControl.add(self.tab4, text='Views and Reports')
         
-        tab5 = ttk.Frame(tabControl)
-        tabControl.add(tab5, text='Accounting Memo')
+        self.tab5 = ttk.Frame(self.tabControl)
+        self.tabControl.add(self.tab5, text='Accounting Memo')
         
-        tab6 = ttk.Frame(tabControl)
-        tabControl.add(tab6, text='Maintenance')
+        self.tab6 = ttk.Frame(self.tabControl)
+        self.tabControl.add(self.tab6, text='Maintenance')
         
-        tabControl.grid()  # Pack to make visible
+        self.tabControl.grid()  # Pack to make visible
         
-        frm1 = ttk.Labelframe(tab1, text='General Journal', width= 600, height=600)
+        frm1 = ttk.Labelframe(self.tab1, text='General Journal', width= 650, height=600)
         frm1.grid()
         ttk.Label(frm1, text="The General Journal is the book of first entry in the accounting system. It is accessed directly in the course of recording the daily activities of the enterprise.\n All other related books are accessible as appropriate for addition and update from the general journal.").grid(column=0, row=0, padx=4, pady=4,sticky='W')
         frm1a = ttk.Labelframe(frm1, width= 550, height=500)
-        frm1a.grid()
+        frm1a.grid(column=0,row=1)
         jDates = (0,0)
         self.updateJournal = ttk.Button(frm1a, text="Update Display", command=lambda: self.do_showJournal(jDates)).grid(column=0,row=1,padx=4, pady=4)
         self.printJournal = ttk.Button(frm1a, text="PRINT").grid(column=1,row=1,padx=4, pady=4)
         self.newEntry = ttk.Button(frm1a, text="New Entry", command=lambda: insertJournalForm(self)).grid(column=2,row=1,padx=4, pady=4)
         ttk.Label(frm1, text="Transact\t    Date\t\t        Time\t\tDescription\t\t\tDebit:   Account    Amount\t   Credit:  Account    Amount").grid(column=0, row=2, padx=4, pady=4,sticky='W')
-        scrolW1  = 100; scrolH1  =  40
+        scrolW1  = 100; scrolH1  =  35
         self.scrolList1 = scrolledtext.ScrolledText(frm1, width=scrolW1, height=scrolH1, wrap=tk.WORD)
-        self.scrolList1.grid(column=0, row=2, padx=4, pady=4, sticky='WE', columnspan=3)
-        self.do_showJournal(jDates)
+        self.scrolList1.grid(column=0, row=3, padx=4, pady=4, sticky='WE', columnspan=3)
+        self.do_showJournal((0,0))
         
-        frm2 = ttk.Labelframe(tab2, text='General Ledger', width= 400, height=600)
+        frm2 = ttk.Labelframe(self.tab2, text='General Ledger', width= 650, height=600)
         frm2.grid()
         ttk.Label(frm2, text="The General Ledger is the main book in the accounting system. It is accessed indirectly by the General Journal in the \ncourse of daily activity. As a result there will be found no menu or button actions that allow direct entry or edit of \nthe Ledger accounts.").grid(column=0, row=0, padx=4, pady=4,sticky='W')
         frm2a = ttk.Labelframe(frm2, width= 400, height=500)
-        frm2a.grid()
+        frm2a.grid(column=0,row=1)
         self.updateLedger = ttk.Button(frm2a, text="Update Display", command=lambda: self.do_showLedger(0)).grid(column=0,row=0,padx=4, pady=4)
         self.printLedger = ttk.Button(frm2a, text="PRINT").grid(column=1,row=0,padx=4, pady=4)
         self.newAccount = ttk.Button(frm2a, text="Show Another").grid(column=2,row=0,padx=4, pady=4)
         ttk.Label(frm2, text="Account \tTransaction\t Amount \tBalance \t\t").grid(column=0, row=2, padx=4, pady=4,sticky='W')
-        scrolW1  = 80; scrolH1  =  40
+        scrolW1  = 80; scrolH1  =  35
         self.scrolList2 = scrolledtext.ScrolledText(frm2, width=scrolW1, height=scrolH1, wrap=tk.WORD)
         self.scrolList2.grid(column=0, row=3, padx=4, pady=4, sticky='WE', columnspan=3)
         self.do_showLedger(0)
         
-        ## Set tab and contents for the CHar of Accounts
-        frm3 = ttk.Labelframe(tab3, text='Chart of Accounts', width= 400, height=600)
+        ## Set tab and contents for the Chart of Accounts
+        frm3 = ttk.Labelframe(self.tab3, text='Chart of Accounts', width= 650, height=600)
         frm3.grid()
-        frm3a = ttk.Labelframe(frm3, width= 400, height=500)
+        ttk.Label(frm3, text="The Chart of Accounts is the organizing principle of the accounting system. It is accessed directly in defining the business\n activities for the of the enterprise.\n\n At system initialization the basic default accounts are automatically configured. Subsequently the chart is accessible as\n needed to set up new customer and supplier accounts for ongoing operation of the business").grid(column=0, row=0, padx=4, pady=4,sticky='W')
+        frm3a = ttk.Labelframe(frm3, width= 400, height=450)
         frm3a.grid()
         self.updateChart = ttk.Button(frm3a, text="Update Display", command=lambda: self.do_showChart()).grid(column=0,row=0,padx=4, pady=4)
         self.printChart = ttk.Button(frm3a, text="PRINT").grid(column=1,row=0,padx=4, pady=4)
         self.newAccount = ttk.Button(frm3a, text="New Account", command=lambda: insertChartForm(self)).grid(column=2,row=0,padx=4, pady=4)
-        ttk.Label(frm3, text="Account \t Name \t\t\t\t\t\t\tType\t\tBalance").grid(column=0, row=1, padx=4, pady=4,sticky='W')
-        scrolW1  = 80; scrolH1  =  40
+        ttk.Label(frm3, text="Account \t Name \t\t\t\t\t\t\tType\t\tBalance").grid(column=0, row=2, padx=4, pady=4,sticky='W')
+        scrolW1  = 80; scrolH1  =  32
         self.scrolList3 = scrolledtext.ScrolledText(frm3, width=scrolW1, height=scrolH1, wrap=tk.WORD)
-        self.scrolList3.grid(column=0, row=2, padx=4, pady=4, sticky='WE', columnspan=3)
+        self.scrolList3.grid(column=0, row=3, padx=4, pady=4, sticky='WE', columnspan=3)
         self.do_showChart()
         
-        frm4 = ttk.Labelframe(tab4, text='Accounting Reports', width= 500, height=600)
+        frm4 = ttk.Labelframe(self.tab4, text='Accounting Reports', width= 800, height=590)
         frm4.grid(padx=8, pady=4)
-        self.reportctl = ttk.LabelFrame(frm4, text = "List of Report")
-        self.reportctl.grid(column=0, row=0, padx=8, pady=4, sticky='W') 
+        self.reportctl = ttk.LabelFrame(frm4, text = "List of Reports")
+        self.reportctl.grid(column=0, row=0, padx=8, pady=4, sticky='W')
+        frm4b = ttk.Frame(frm4, width= 700, height=450)
+        frm4b.grid(column=0, row=3)                       
         self.action_balanceSheet = ttk.Button(self.reportctl, text="Balance Sheet", command=lambda: self.do_balSheet())
         self.action_balanceSheet.grid(column=0, row=0, padx=4, pady=6)        
-        self.action_journalReport = ttk.Button(self.reportctl, text="Journal Report", command=lambda: self.do_journalRpt())
-        self.action_journalReport.grid(column=1, row=0, padx=4, pady=6)        
-        self.action_ledgerAccount = ttk.Button(self.reportctl, text="Ledger Account", command=lambda: self.do_LedgerAcct())
+        self.action_journalReport = ttk.Button(self.reportctl, text="Journal Report", command=lambda: self.do_reptTransact(0))
+        self.action_journalReport.grid(column=1, row=0, padx=4, pady=6)
+        self.action_journalReport = ttk.Button(self.reportctl, text="Single Transact", command=lambda: getTransact(self))
+        self.action_journalReport.grid(column=2, row=0, padx=4, pady=6)         
+        self.action_ledgerAccount = ttk.Button(self.reportctl, text="Ledger Account", command=lambda: fetchLedgerAccount(self))
         self.action_ledgerAccount.grid(column=3, row=0, padx=4, pady=6)
-        self.action_listAccounts = ttk.Button(self.reportctl, text="List Accounts", command=lambda: self.list_Accounts())
+        self.action_listAccounts = ttk.Button(self.reportctl, text="List Accounts", command=lambda: self.do_reptChart())
         self.action_listAccounts.grid(column=4, row=0, padx=4, pady=6)
         self.action_revenueExpense = ttk.Button(self.reportctl, text="Revenue and Expenses", command=lambda: self.do_RevandExp())
         self.action_revenueExpense.grid(column=5, row=0, padx=4, pady=6)
-        reportWin = Canvas(frm4, width=450, height=550, offset='20,10')
-        reportWin.grid(column=0, row=2, padx=8,pady=4)
-        reportWin.create_text(225,10, text="This is a dummy accounting report on the canvas") 
+        self.reportWin = Canvas(frm4b, width=700, height=550,bg='#FFFFFF',scrollregion=(0,0,1000,2000)) 
+        hbar=Scrollbar(frm4b,orient=tk.HORIZONTAL)
+        hbar.pack(side=tk.BOTTOM,fill=tk.X)
+        hbar.config(command=self.reportWin.xview)
+        vbar=Scrollbar(frm4b,orient=tk.VERTICAL)
+        vbar.pack(side=tk.RIGHT,fill=tk.Y)
+        vbar.config(command=self.reportWin.yview)
+        self.reportWin.config(xscrollcommand=hbar.set, yscrollcommand=vbar.set)
+        self.reportWin.pack(side=tk.LEFT,expand=True,fill=tk.BOTH)
+               
+        self.reportWin.create_text(10,10, anchor=tk.NW, text="This is a dummy accounting report on the canvas.This is a dummy accounting report on the canvas.This is a dummy accounting report on the canvas.This is a dummy accounting report on the canvas") 
         
-        frm5 = ttk.Labelframe(tab5, text='Associated Journal or Ledger Note', width= 400, height=600)
-        frm5.grid()             
+        frm5 = ttk.Labelframe(self.tab5, text='Journal or Ledger Associated Note', width= 650, height=600)
+        frm5.grid()
+        self.memofields = ttk.LabelFrame(frm5, width=56)
+        self.memofields.grid(column=0, row=1, padx=8, pady=4, sticky='W') 
+        self.lblmemoID = tk.Label(self.memofields, text="ID").grid(column=0, row=1)
+        self.ememoID = tk.Entry(self.memofields, width=10)
+        self.ememoID.grid(column=1, row=1, padx=5, pady=4, sticky='W')
+        self.lblmemoTransact = tk.Label(self.memofields, text="Transact").grid(column=2, row=1)
+        self.ememoTransact = tk.Entry(self.memofields, width=16)
+        self.ememoTransact.grid(column=3, row=1, padx=5, pady=4, sticky='W')
+        self.lblmemoDate = tk.Label(self.memofields, text="Date").grid(column=4, row=1)
+        self.ememoDate = tk.Entry(self.memofields,width=18)
+        self.ememoDate.grid(column=5, row=1, padx=5, pady=4, sticky='W')        
+                     
         scrolW1  = 80; scrolH1  =  20
         self.scr_memo = scrolledtext.ScrolledText(frm5, width=scrolW1, height=scrolH1, wrap=tk.WORD)
-        self.scr_memo.grid(column=0, row=6, padx=4, pady=4, sticky='WE', columnspan=3)
+        self.scr_memo.grid(column=0, row=7, padx=4, pady=4, sticky='WE', columnspan=3)
         
         self.memoctl = ttk.LabelFrame(frm5, width=56)
         self.memoctl.grid(column=0, row=0, padx=8, pady=4, sticky='W') 
@@ -705,12 +598,16 @@ class AccountingSystem():
         self.action_loadmemo = ttk.Button(self.memoctl, text="GET ANOTHER", command=lambda: self.fetchMemo())
         self.action_loadmemo.grid(column=4, row=0, padx=4, pady=6)
         
-        frm6 = ttk.Labelframe(tab6, text='System Maintenance', width= 400, height=600)
+        frm6 = ttk.Labelframe(self.tab6, text='System Maintenance', width= 650, height=600)
         frm6.grid()
-        self.action_sysSetup = ttk.Button(frm6, text=" NEW SET-UP ", command=lambda:self.createAccounts()).grid(column=0,row=0, padx=8, pady=4)
-        self.action_sysPack = ttk.Button(frm6, text=" PACK DB ", command=lambda:self.packDatabase()).grid(column=1,row=0, padx=8, pady=4)
-        self.action_sysTrialBal = ttk.Button(frm6, text="TRIAL BALANCE", command=lambda:self.createAccounts()).grid(column=0,row=1, padx=8, pady=4)
-        self.action_sysFiscalClose = ttk.Button(frm6, text="FISCAL CLOSE", command=lambda:self.packDatabase()).grid(column=1,row=1, padx=8, pady=4)
+        self.action_sysSetup = ttk.Button(frm6, text=" NEW SET-UP ", command=lambda:AccountDB.createAccounts(self)).grid(column=0,row=0, padx=8, pady=4)
+        self.action_sysPack = ttk.Button(frm6, text=" PACK DB ", command=lambda:AccountDB.packDatabase(self)).grid(column=1,row=0, padx=8, pady=4)
+        self.action_sysSetup = ttk.Button(frm6, text="BACK-UP FILES", command=lambda:AccountDB.packDatabase(self)).grid(column=2,row=0, padx=8, pady=4)
+        self.action_sysPack = ttk.Button(frm6, text=" RESTORE FILES", command=lambda:AccountDB.packDatabase(self)).grid(column=3,row=0, padx=8, pady=4)
+        self.action_sysTrialBal = ttk.Button(frm6, text="TRIAL BALANCE").grid(column=0,row=1, padx=8, pady=4)
+        self.action_sysFiscalClose = ttk.Button(frm6, text="FISCAL CLOSE").grid(column=1,row=1, padx=8, pady=4)
+        self.action_sysTrialBal = ttk.Button(frm6, text="Unassigned").grid(column=2,row=1, padx=8, pady=4)
+        self.action_sysFiscalClose = ttk.Button(frm6, text="Unassigned").grid(column=3,row=1, padx=8, pady=4)
         
         # meubar created here --------------------------------------------
         menuBar = Menu(self.win)
@@ -718,11 +615,12 @@ class AccountingSystem():
         # Add menu items
         # Add System Menu
         sysMenu = Menu(menuBar, tearoff=0)
-        sysMenu.add_command(label="New Set-up", command=lambda: self.createAccounts())
+        sysMenu.add_command(label="New Set-up", command=lambda: AccountDB.createAccounts())
         sysMenu.add_command(label="Open")
         sysMenu.add_command(label="Save")
         sysMenu.add_command(label="Print")
-        sysMenu.add_command(label="Copy Database")
+        sysMenu.add_command(label="Back-up Database")
+        sysMenu.add_command(label="Restore Database")
         sysMenu.add_separator()
         sysMenu.add_command(label="Exit", command=self._quit)
         menuBar.add_cascade(label="System", menu=sysMenu)
@@ -743,17 +641,16 @@ class AccountingSystem():
         entryMenu = Menu(menuBar, tearoff=0)
         entryMenu.add_command(label="Journal Entry", command=lambda: insertJournalForm(self))
         entryMenu.add_command(label="New Account", command=lambda: insertChartForm(self))
-        entryMenu.add_command(label="Make Memo")
-        entryMenu.add_separator()
-        entryMenu.add_command(label="Trial Balance")
-        entryMenu.add_command(label="End of Year")
-        menuBar.add_cascade(label="Entry", menu=entryMenu)
+        entryMenu.add_command(label="Make Memo", command=lambda: insertMemoForm(self))
+        menuBar.add_cascade(label="Activity", menu=entryMenu)
         
         # Add an Data entry Menu
         viewMenu = Menu(menuBar, tearoff=0)
-        viewMenu.add_command(label="View Journal", command=lambda: getJournalDates(self))
-        viewMenu.add_command(label="View Accounts")
-        viewMenu.add_command(label="View Ledger", command=lambda: getLedgerAccount(self))
+        viewMenu.add_command(label="View Journal", command=lambda: self.do_reptTransact(0))
+        viewMenu.add_command(label="View Transaction", command=lambda: getTransact(self))
+        viewMenu.add_command(label="View Accounts", command=lambda: self.do_reptChart())
+        viewMenu.add_command(label="View Ledger", command=lambda: fetchLedgerAccount(self))
+        viewMenu.add_command(label="View a Memo", command=lambda: getTransact(self))
         viewMenu.add_separator()
         viewMenu.add_command(label="Trial Balance")
         viewMenu.add_command(label="End of Year")
@@ -763,7 +660,6 @@ class AccountingSystem():
         reportMenu = Menu(menuBar, tearoff=0)
         reportMenu.add_command(label="Balance Sheet")
         reportMenu.add_command(label="Ledger Account")
-        reportMenu.add_command(label="Journal Transactions")
         reportMenu.add_command(label="Income Report")
         reportMenu.add_command(label="Expense Report")
         reportMenu.add_command(label="Payroll Report")
@@ -781,6 +677,6 @@ class AccountingSystem():
 if __name__ == '__main__':
     asys = AccountingSystem()
     w = (2*asys.win.winfo_screenwidth())/3
-    h = asys.win.winfo_screenheight()
+    h = (3*asys.win.winfo_screenheight())/4
     asys.win.geometry("%dx%d+0+0" % (w, h))
     asys.win.mainloop()
