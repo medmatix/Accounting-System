@@ -216,6 +216,27 @@ class AccountDB(object):
         db.commit()
         db.close()
         
+    def getAccountNumbers(self, accrange, acctype):
+        '''
+        Get a list of account numbers from chart
+        '''
+        acctNos = list() 
+        db = sqlite3.connect('OpenAccounting.db')
+        if accrange == (0,0):
+            if acctype == 'DEBIT':
+                cursor = db.cursor()
+                cursor.execute("SELECT Account FROM chart WHERE ActyType ='DEBIT' ORDER BY Account".format(accrange))
+            else:                                    # AccType = CREDIT
+                cursor = db.cursor()
+                cursor.execute("SELECT * FROM chart WHERE ActyType = 'CREDIT' ORDER BY Account".format(accrange))
+        else:
+            cursor = db.cursor()
+            cursor.execute("SELECT * FROM chart WHERE Account > {} and Account < {} ORDER BY Account".format(accrange))                             
+        for row in cursor:            
+            acctNos.append(row)        
+        db.close()
+        return acctNos
+        
     def getAccountType(self,laccount):
         '''
         Get LAST ledger balance for specified account

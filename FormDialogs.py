@@ -25,7 +25,8 @@ Classes, External, independently constructed Forms, Dialogs etc
 '''
 class insertJournalForm(object):
     '''
-    A form-dialog class insertion Form to building and display for Journal Access Dialog
+    A form-dialog class insertion Form to building and display for Journal Access 
+    in it's own pop-up Dialog window
     @summary: A form to collect journal item data to add to journal table,. A Part of Accounting System application
     @see: refer to main module (AccountingSystem) documentation
     created: Oct 17, 2018
@@ -35,7 +36,7 @@ class insertJournalForm(object):
     
     def __init__(self, goal):
         '''
-        Constructor for Add to Journal data dialog window
+        Constructor for Add to Journal in it's own pop-up data dialog window
         '''
         
         # Create instance
@@ -163,11 +164,10 @@ class insertJournalForm(object):
         
 class insertChartForm(object):
     '''
-    A form-dialog class insertion Form for building and display Chart of Account access Dialog
-    @summary: A form to collect movie data to add to list, and send to addMovietoList function. A Part of MomsMovies application
-    @see: refer to main module (MomsMovies) documentation
+    A form-dialog class insertion Form for building and display Chart of Account 
+    access in it's own pop-up Dialog window
+    @summary: A form to collect new account to add to Chart, and send to database. 
     created: Oct 14, 2018
-        @
     '''
     def __init__(self, goal):
         '''
@@ -255,7 +255,8 @@ class insertChartForm(object):
         
 class insertMemoForm(object):
     '''
-    A form-dialog class insertion Form for building and display Memo Composition Dialog
+    A form-dialog class insertion Form for building and display Memo Composition 
+    in it's own pop-up Dialog window
     @summary: A form to collect memo input, 
     created: Oct 14, 2018
     '''
@@ -322,3 +323,209 @@ class insertMemoForm(object):
     def on_cancel(self):
         print("Cancelled action")
         self.frmFD3.destroy()   
+        
+class ReportFormats():
+
+    def do_reptLedger(self, account):
+        '''
+        Report formating and data retrieval for Ledger account reports
+        '''
+        self.win.update()
+        self.tab4.focus_force()
+        self.tabControl.update()
+        self.tab4.lift(aboveThis=None)
+        self.tabControl.update()
+        ledgerAcct=AccountDB.getLedgerAccount(self,account)        
+        self.reportWin.delete("all")
+        self.reportWin.create_text(5,18,anchor=tk.NW, text='Account')  
+        self.reportWin.create_text(56,18,anchor=tk.NW, text='Transaction: ')        
+        # self.reportWin.create_text(150,18,anchor=tk.NW, text='Date')
+        # self.reportWin.create_text(196,18,anchor=tk.NW, text='Time')
+        self.reportWin.create_text(150,18,anchor=tk.NW, text='Description')
+        self.reportWin.create_text(420,18,anchor=tk.NW, text='Amount')
+        self.reportWin.create_text(485,18,anchor=tk.NW, text='Balance')
+        cline = 18
+        cline = cline + 20
+        self.reportWin.create_line(10,cline, 670,cline, fill="blue")
+        cline = cline + 3
+        self.reportWin.create_line(10,cline, 670,cline, fill="blue")
+        for row in ledgerAcct:
+            cline = cline + 13
+            maccount = str(row[0])        
+            maccountLength = len(maccount)+(4-len(maccount))    # 4 x 7 =28
+            maccount = maccount.ljust(maccountLength)
+            self.reportWin.create_text(10,cline,anchor=tk.NW, text=maccount)
+            mTransact = str(row[1])
+            transactLength = 16                                 # 16 x 7 = 112
+            mTransact = mTransact.ljust(transactLength)
+            self.reportWin.create_text(62,cline,anchor=tk.NW, text=mTransact)
+            mAmount = str(round(row[2],2))        
+            mamountLength = len(mAmount)+(8-len(mAmount))     # 8 x 7 = 56
+            mAmount = mAmount.rjust(mamountLength)
+            self.reportWin.create_text(420,cline,anchor=tk.NW, text=mAmount)
+            mBalance = str(round(row[3],2))        
+            mbalanceLength = len(mBalance)+(8-len(mBalance))     # 8 x 7 = 56
+            mBalance = mBalance.rjust(mbalanceLength)
+            self.reportWin.create_text(485,cline,anchor=tk.NW, text=mBalance)
+        cline = cline + 20
+        self.reportWin.create_line(10,cline, 670,cline, fill="blue")
+        cline = cline + 3
+        self.reportWin.create_line(10,cline, 670,cline, fill="blue")
+        
+    def do_reptTransact(self, jTransact):
+        '''
+        Show formatted journal transaction
+        font conversion factor is 7 = 10pt
+        '''       
+        self.win.update()
+        self.tab4.focus_force()
+        self.tabControl.update()
+        self.tab4.lift(aboveThis=None)
+        self.tabControl.update()
+        transaction = AccountDB.getJournalTransact(self,jTransact)
+        self.reportWin.delete("all")
+        self.reportWin.create_text(10,18,anchor=tk.NW, text='Transaction: ')        
+        self.reportWin.create_text(112,18,anchor=tk.NW, text='Date')
+        self.reportWin.create_text(189,18,anchor=tk.NW, text='Time')
+        self.reportWin.create_text(252,18,anchor=tk.NW, text='Description')
+        self.reportWin.create_text(522,18,anchor=tk.NW, text='Debit')
+        self.reportWin.create_text(606,18,anchor=tk.NW, text='Credit')
+        cline = 18
+        cline = cline + 20
+        self.reportWin.create_line(10,cline, 670,cline, fill="blue")
+        cline = cline + 3
+        self.reportWin.create_line(10,cline, 670,cline, fill="blue")
+        for row in transaction:
+            cline = cline + 13
+            mTransact = str(row[0])
+            transactLength = 16                # 16 x 7 = 112
+            mTransact = mTransact.ljust(transactLength)
+            self.reportWin.create_text(10,cline,anchor=tk.NW, text=mTransact)
+            mDate  = row[1]
+            #mDate ="2018-10-24"
+            dateLength = 11                # 11 x 7 = 77
+            mDate = mDate.ljust(dateLength)
+            self.reportWin.create_text(112,cline,anchor=tk.NW, text=mDate)
+            mTime  = row[2]
+            #mTime = "12:40:00"
+            timeLength = 9                  # 9 x 7 = 63
+            mTime = mTime.ljust(timeLength)
+            self.reportWin.create_text(189,cline,anchor=tk.NW, text=mTime)
+            mDescription = row[3]
+            #mDescription ="Pay bills"       # 30 x 9 = 270
+            descLength = len(mDescription)+(30-len(mDescription))
+            mDescription = mDescription.ljust(descLength)
+            self.reportWin.create_text(252,cline,anchor=tk.NW, text=mDescription)
+            mdAccount = str(row[4])
+            #mdAccount = "100"               # 4 x 7 =28
+            daccountLength = len(mdAccount)+(4-len(mdAccount))
+            mdAccount = mdAccount.ljust(daccountLength)
+            self.reportWin.create_text(522,cline,anchor=tk.NW, text=mdAccount)
+            mdAmount = str(round(row[5],2))
+            #mdAmount = "-24.91 "            # 8 x 7 = 56
+            damountLength = len(mdAmount)+(8-len(mdAmount))
+            mdAmount = mdAmount.rjust(damountLength)
+            self.reportWin.create_text(550,cline,anchor=tk.NW, text=mdAmount)
+            mcAccount = str(row[6])
+            #mcAccount = "220"
+            caccountLength = len(mcAccount)+(4-len(mcAccount))
+            mcAccount = mcAccount.ljust(caccountLength)
+            self.reportWin.create_text(606,cline,anchor=tk.NW, text=mcAccount)
+            mcAmount = str(round(row[7],2))
+            #mcAmount = "-24.91 "
+            camountLength = len(mcAmount)+(8-len(mcAmount))
+            mcAmount = mcAmount.rjust(camountLength)
+            self.reportWin.create_text(634,cline,anchor=tk.NW, text=mcAmount)
+            
+        cline = cline + 20
+        self.reportWin.create_line(10,cline, 670,cline, fill="blue")
+        cline = cline + 3
+        self.reportWin.create_line(10,cline, 670,cline, fill="blue")
+        if (int(jTransact) != 0):
+            '''
+            If only a single transaction is to be reported, 
+            then include all associated accounting memos with it
+            '''
+            memo = AccountDB.getTransactMemo(self,jTransact)
+            cline = cline + 26
+            self.reportWin.create_text(10,cline,anchor=tk.NW, text='Memos')
+            cline = cline + 13
+            self.reportWin.create_text(10,cline,anchor=tk.NW, text='Number')        
+            self.reportWin.create_text(112,cline,anchor=tk.NW, text='Date')
+            self.reportWin.create_text(189,cline,anchor=tk.NW, text='Time')
+            for mrow in memo:
+                cline = cline + 13
+                memoDate  = mrow[2]
+                dateLength = 11                # 11 x 7 = 77
+                memoDate = memoDate.ljust(dateLength)
+                self.reportWin.create_text(112,cline,anchor=tk.NW, text=memoDate)
+                
+                cline = cline + 13
+                memoID  = mrow[0]
+                self.reportWin.create_text(10,cline,anchor=tk.NW, text=memoID)
+                memoText  = mrow[3]
+                self.reportWin.create_text(55,cline,anchor=tk.NW, text=memoText)
+                    
+    def do_reptChart(self):
+        '''
+        '''        
+        self.win.update()
+        self.tab4.focus_force()
+        self.tabControl.update()
+        self.tab4.lift(aboveThis=None)
+        self.tabControl.update()
+        chartAcct=AccountDB.getChartAccounts(self)       
+        self.reportWin.delete("all")
+        self.reportWin.create_text(5,18,anchor=tk.NW, text='Account')  
+        self.reportWin.create_text(56,18,anchor=tk.NW, text='Description')
+        self.reportWin.create_text(420,18,anchor=tk.NW, text='Type')
+        self.reportWin.create_text(485,18,anchor=tk.NW, text='Balance')
+        cline = 18
+        cline = cline + 20
+        self.reportWin.create_line(10,cline, 670,cline, fill="blue")
+        cline = cline + 3
+        self.reportWin.create_line(10,cline, 670,cline, fill="blue")
+        for row in chartAcct:
+            cline = cline + 13
+            maccount = str(row[0])        
+            maccountLength = len(maccount)+(4-len(maccount))    # 4 x 7 =28
+            maccount = maccount.ljust(maccountLength)
+            self.reportWin.create_text(10,cline,anchor=tk.NW, text=maccount)
+            mDescription = row[1]
+            descLength = len(mDescription)+(30-len(mDescription))
+            mDescription = mDescription.ljust(descLength)
+            self.reportWin.create_text(56,cline,anchor=tk.NW, text=mDescription)
+            mType = row[2]       
+            mTypeLength = len(mType)+(8-len(mType))     # 6 x 7 = 42
+            mType = mType.rjust(mTypeLength)
+            self.reportWin.create_text(420,cline,anchor=tk.NW, text=mType)
+            mBalance = str(round(row[3],2))        
+            mbalanceLength = len(mBalance)+(8-len(mBalance))     # 8 x 7 = 56
+            mBalance = mBalance.rjust(mbalanceLength)
+            self.reportWin.create_text(485,cline,anchor=tk.NW, text=mBalance)
+        cline = cline + 20
+        self.reportWin.create_line(10,cline, 670,cline, fill="blue")
+        cline = cline + 3
+        self.reportWin.create_line(10,cline, 670,cline, fill="blue")
+
+    def do_reptRevandExp(self):
+        '''
+        '''
+        # Fetch revenue accounts
+        pass
+        #Fetch Expense accounts
+        
+        # Get Balance totals for each account 
+        
+        # Display the Revenue and Expense accounts in a table
+        
+    def do_reptBalSheet(self):
+        '''
+        '''
+        # Fetch all Account Balances
+        
+        # Do trial Balances of each account, notify if any balances do not 
+        #    agree with Chart of Account balances
+        
+        #Make and diaplay the Balance Sheet
+        pass
