@@ -104,6 +104,19 @@ class AccountDB(object):
         db.close()
         return chart
     
+    def getBalSheetAccounts(self, accRange):
+        '''
+        Return a Block of Accounts
+        '''
+        accBlock = list() 
+        db = sqlite3.connect('OpenAccounting.db')
+        cursor = db.cursor()
+        cursor.execute("SELECT * FROM chart WHERE Account >= {} AND Account <= {} ORDER BY Account".format(accRange[0], accRange[1]))
+        for row in cursor:            
+            accBlock.append(row)        
+        db.close()
+        return accBlock
+    
     def existChartAccount(self, account):
         '''
         '''

@@ -24,6 +24,8 @@ from tkinter import simpledialog
 from tkinter import Scrollbar
 from tkinter import Canvas
 from tkinter import font
+import math as mt
+import numpy as np
 import sys
 
 # Custom module imports
@@ -31,6 +33,7 @@ from AccountDB import AccountDB
 from FormDialogs import insertJournalForm, insertChartForm, insertMemoForm
 from FormDialogs import ReportFormats
 from Tooltips import createToolTip, ToolTip
+from ReportPreps import TrialBalance 
 
 
  
@@ -389,8 +392,9 @@ class AccountingSystem():
         '''
         '''
         proceedAnswer = mBox.askyesno("Revenue and Expense Report","Prepare report now?")
-        pass
-    
+        if (proceedAnswer):
+            ReportFormats.do_reptRevandExp(self)
+
     def do_trialBalance(self):
         '''
         Calculate net balances for each chart account and compare to Chart of 
@@ -422,7 +426,7 @@ class AccountingSystem():
             mBox.showinfo('Function Not Implemented Yet, ' , 'Sorry this is not implemented in full yet.\n\n Note For Printing: you can take a screen shot and print from clipboard')
         
         def fetchLedgerAccount(self):
-            answer = simpledialog.askstring("Get Ledger Account", "What Account Number to retrieve?", parent=self.win)
+            answer = simpledialog.askstring("Get Ledger Account", "What Account Number to retrieve?\n Enter '0' for ALL\n", parent=self.win)
             if answer is not None:
                 ReportFormats.do_reptLedger(self,answer)
             else:
@@ -430,7 +434,7 @@ class AccountingSystem():
                 return 0
             
         def getJournalDates(self):
-            answer = simpledialog.askstring("Get Journal Range", "Start and End Date for Journal Retrieval\n, a comma separated pair", parent=self.win)
+            answer = simpledialog.askstring("Get Journal Range", "Start and End Date for Journal Retrieval\n, a comma separated pair. \n Enter '0,0' for ALL\n", parent=self.win)
             if answer is not None:
                 jDates = (answer,)
                 self.do_showJournal((jDates))
@@ -439,7 +443,7 @@ class AccountingSystem():
                 return 0
         
         def getTransact(self):
-            answer = simpledialog.askstring("Get Transaction", "Transaction to retrieve?\n\nEnter a Transaction Number\n 0 for all \n", parent=self.win)
+            answer = simpledialog.askstring("Get Transaction", "Transaction to retrieve?\n\nEnter a Transaction Number\n Enter '0' for ALL \n", parent=self.win)
             if answer is not None:
                 jTransact = (answer)
                 self.do_reptTransact(jTransact)                
