@@ -229,7 +229,7 @@ class insertChartForm(object):
     def on_click(self):
         
         account = self.e0.get()
-        if(account in (100,200,300,400,500,120,220,320)):
+        if(account in (100,200,300,400,500,120,220,320,399)):
             print("ERROR, account is system reserved account, do not use.")
             self.on_cancel()
         # Check if account exits
@@ -521,15 +521,16 @@ class ReportFormats():
         
         # Display the Revenue and Expense accounts in a table
         self.reportWin.delete("all")
-        self.reportWin.create_text(150,5,  anchor=tk.NW, font=font.BOLD, text='Revenue', fill='blue') 
-        self.reportWin.create_text(460,5,anchor=tk.NW, font=font.BOLD, text='Expenses',fill='blue') 
-        self.reportWin.create_text(12,22,anchor=tk.NW, text='Account', fill='blue')  
-        self.reportWin.create_text(63,22,anchor=tk.NW, text='Name', fill='blue')
-        self.reportWin.create_text(273,22,anchor=tk.NW, text='Balance', fill='blue')
-        self.reportWin.create_text(344,22,anchor=tk.NW, text='Account', fill='blue')  
-        self.reportWin.create_text(395,22,anchor=tk.NW, text='Name', fill='blue')
-        self.reportWin.create_text(605,22,anchor=tk.NW, text='Balance', fill='blue')
-        cline = 22
+        self.reportWin.create_text(335,12, font=font.BOLD, text='THE REVENUE STATEMENT') 
+        self.reportWin.create_text(150,38,  anchor=tk.NW, font=font.BOLD, text='Revenue', fill='blue') 
+        self.reportWin.create_text(460,38,anchor=tk.NW, font=font.BOLD, text='Expenses',fill='blue') 
+        self.reportWin.create_text(12,55,anchor=tk.NW, text='Account', fill='blue')  
+        self.reportWin.create_text(63,55,anchor=tk.NW, text='Name', fill='blue')
+        self.reportWin.create_text(273,55,anchor=tk.NW, text='Balance', fill='blue')
+        self.reportWin.create_text(344,55,anchor=tk.NW, text='Account', fill='blue')  
+        self.reportWin.create_text(395,55,anchor=tk.NW, text='Name', fill='blue')
+        self.reportWin.create_text(605,55,anchor=tk.NW, text='Balance', fill='blue')
+        cline = 55
         cline = cline + 20
         self.reportWin.create_line(10,cline, 670,cline, fill="blue")
         cline = cline + 3
@@ -551,22 +552,14 @@ class ReportFormats():
             mBalance = str(round(row[3],2))        
             mbalanceLength = len(mBalance)+(8-len(mBalance))     # 8 x 7 = 56
             mBalance = mBalance.rjust(mbalanceLength)
-            self.reportWin.create_text(273,cline,anchor=tk.NW, text=mBalance)
-        
-        cline = cline + 20
-        self.reportWin.create_line(265,cline, 325,cline, fill="blue")
-        cline = cline + 13
-        mTotal = str(round(revenueTotal,2))        
-        mTotalLength = len(mTotal)+(10-len(mTotal))     # 8 x 7 = 56
-        mTotal = mTotal.rjust(mTotalLength)
-        self.reportWin.create_text(265,cline,anchor=tk.NW, text=mTotal)    
+            self.reportWin.create_text(273,cline,anchor=tk.NW, text=mBalance)          
         
         #get liabilities
         # get liability block       
         blockAcct=AccountDB.getBalSheetAccounts(self,(500,599))
         expenseTotal = 0.0
         # reset cline to top right
-        cline = 44
+        cline = 78
         for row in blockAcct:
             expenseTotal = expenseTotal + float(row[3])
             cline = cline + 13
@@ -583,21 +576,25 @@ class ReportFormats():
             mBalance = mBalance.rjust(mbalanceLength)
             self.reportWin.create_text(605,cline,anchor=tk.NW, text=mBalance)
         
-        cline = cline + 20
-        self.reportWin.create_line(598,cline, 663,cline, fill="blue")
+        retainedEarnings = revenueTotal - expenseTotal
+        
+        cline = cline + 33
+        self.reportWin.create_line(10,cline, 670,cline, fill="blue")
+        cline = cline + 3
+        self.reportWin.create_line(10,cline, 670,cline, fill="blue") 
         cline = cline + 13
+        # Revenue total
+        mlTotal = str(round(revenueTotal,2))        
+        mlTotalLength = len(mlTotal)+(10-len(mlTotal))     # 8 x 7 = 56
+        mlTotal = mlTotal.rjust(mlTotalLength)
+        self.reportWin.create_text(265,cline,anchor=tk.NW, text=mlTotal)
+        # expense total
         mrTotal = str(round(expenseTotal,2))        
         mrTotalLength = len(mrTotal)+(10-len(mrTotal))     # 8 x 7 = 56
         mrTotal = mrTotal.rjust(mrTotalLength)
-        self.reportWin.create_text(598,cline,anchor=tk.NW, text=mrTotal)  
-        
-        retainedEarnings = revenueTotal - expenseTotal
-        
-        cline = cline + 20
-        self.reportWin.create_line(10,cline, 670,cline, fill="blue")
-        cline = cline + 3
-        self.reportWin.create_line(10,cline, 670,cline, fill="blue")        
-        cline = cline + 13
+        self.reportWin.create_text(598,cline,anchor=tk.NW, text=mrTotal) 
+               
+        cline = cline + 39
         maccount = str(399)        
         maccountLength = len(maccount)+(4-len(maccount))    # 4 x 7 =28
         maccount = maccount.ljust(maccountLength)
@@ -611,6 +608,7 @@ class ReportFormats():
         mBalance = mBalance.rjust(mbalanceLength)
         self.reportWin.create_text(273,cline,anchor=tk.NW, text=mBalance)
         
+        
 
     def do_reptBalSheet(self):
         '''
@@ -620,17 +618,19 @@ class ReportFormats():
         # Do trial Balances of each account, notify if any balances do not 
         #    agree with Chart of Account balances
         
+        
         #Make and display the Balance Sheet   
         self.reportWin.delete("all")
-        self.reportWin.create_text(150,5,  anchor=tk.NW, font=font.BOLD, text='Assets', fill='blue') 
-        self.reportWin.create_text(460,5,anchor=tk.NW, font=font.BOLD, text='Liabilities',fill='blue') 
-        self.reportWin.create_text(12,22,anchor=tk.NW, text='Account', fill='blue')  
-        self.reportWin.create_text(63,22,anchor=tk.NW, text='Name', fill='blue')
-        self.reportWin.create_text(273,22,anchor=tk.NW, text='Balance', fill='blue')
-        self.reportWin.create_text(344,22,anchor=tk.NW, text='Account', fill='blue')  
-        self.reportWin.create_text(395,22,anchor=tk.NW, text='Name', fill='blue')
-        self.reportWin.create_text(605,22,anchor=tk.NW, text='Balance', fill='blue')
-        cline = 22
+        self.reportWin.create_text(335,12, font=font.BOLD, text='THE BALANCE SHEET') 
+        self.reportWin.create_text(150,38,  anchor=tk.NW, font=font.BOLD, text='ASSETS', fill='blue') 
+        self.reportWin.create_text(460,38,anchor=tk.NW, font=font.BOLD, text='LIABILITIES',fill='blue') 
+        self.reportWin.create_text(12,55,anchor=tk.NW, text='Account', fill='blue')  
+        self.reportWin.create_text(63,55,anchor=tk.NW, text='Name', fill='blue')
+        self.reportWin.create_text(273,55,anchor=tk.NW, text='Balance', fill='blue')
+        self.reportWin.create_text(344,55,anchor=tk.NW, text='Account', fill='blue')  
+        self.reportWin.create_text(395,55,anchor=tk.NW, text='Name', fill='blue')
+        self.reportWin.create_text(605,55,anchor=tk.NW, text='Balance', fill='blue')
+        cline = 55
         cline = cline + 20
         self.reportWin.create_line(10,cline, 670,cline, fill="blue")
         cline = cline + 3
@@ -667,7 +667,7 @@ class ReportFormats():
         blockAcct=AccountDB.getBalSheetAccounts(self,(200,299))
         liabilityTotal = 0.0
         # reset cline to top right
-        cline = 44
+        cline = 78
         for row in blockAcct:
             assetTotal = assetTotal + float(row[3])
             cline = cline + 13
@@ -744,14 +744,12 @@ class ReportFormats():
         mBalance = str(round(retainedEarnings,2))        
         mbalanceLength = len(mBalance)+(8-len(mBalance))     # 8 x 7 = 56
         mBalance = mBalance.rjust(mbalanceLength)
-        self.reportWin.create_text(605,cline,anchor=tk.NW, text=mBalance)
+        self.reportWin.create_text(612,cline,anchor=tk.NW, text=mBalance)
         
         cline = cline + 20
         self.reportWin.create_line(598,cline, 663,cline, fill="blue")
         cline = cline + 13
-        msTotal = str(round((equityTotal + retainedEarnings),2))
-        
-              
+        msTotal = str(round((equityTotal + retainedEarnings),2))              
             
         msTotalLength = len(msTotal)+(10-len(msTotal))    
         msTotal = msTotal.rjust(msTotalLength)
@@ -759,11 +757,202 @@ class ReportFormats():
         
         cline = cline + 20
         self.reportWin.create_line(598,cline, 663,cline, fill="blue")
+      
+        cline = cline + 43
+        self.reportWin.create_line(10,cline, 670,cline, fill="blue")
+        cline = cline + 3
+        self.reportWin.create_line(10,cline, 670,cline, fill="blue")        
         cline = cline + 13
+        
+        self.reportWin.create_text(265,cline,anchor=tk.NW, text=mTotal)
         mrTotal = str(round((equityTotal + liabilityTotal),2))         
         mrTotalLength = len(mrTotal)+(10-len(mrTotal))    
         mrTotal = msTotal.rjust(mrTotalLength)
+        self.reportWin.create_text(598,cline,anchor=tk.NW, text=mrTotal)
+        
+    def do_reptTrialBalance(self):
+        '''
+        '''
+        # Fetch revenue accounts
+        # Fetch Expense accounts
+        # Get Balance totals for each account        
+        # Display the Revenue and Expense accounts in a table        
+        self.reportWin.delete("all")
+        self.reportWin.create_text(335,12, font=font.BOLD, text='Trial Balance Display') 
+        self.reportWin.create_text(150,38,  anchor=tk.NW, font=font.BOLD, text='DEBITS', fill='blue') 
+        self.reportWin.create_text(460,38,anchor=tk.NW, font=font.BOLD, text='CREDITS',fill='blue') 
+        self.reportWin.create_text(12,55,anchor=tk.NW, text='Account', fill='blue')  
+        self.reportWin.create_text(63,55,anchor=tk.NW, text='Name', fill='blue')
+        self.reportWin.create_text(273,55,anchor=tk.NW, text='Balance', fill='blue')
+        self.reportWin.create_text(344,55,anchor=tk.NW, text='Account', fill='blue')  
+        self.reportWin.create_text(395,55,anchor=tk.NW, text='Name', fill='blue')
+        self.reportWin.create_text(605,55,anchor=tk.NW, text='Balance', fill='blue')
+        cline = 55
+        # -------------------------------------------------------------
+        cline = cline + 20
+        self.reportWin.create_line(10,cline, 670,cline, fill="blue")
+        cline = cline + 3
+        self.reportWin.create_line(10,cline, 670,cline, fill="blue")
+        # -------------------------------------------------------------
+        # -------------------------------------------------------------
+        # Get Debits
+        # get assets block       
+        blockAcct=AccountDB.getBalSheetAccounts(self,(100,199))
+        assetsTotal = 0.0
+        for row in blockAcct:
+            account = row[0]
+            ldgrAccount = AccountDB.getLedgerAccount(self,account)
+            acctTotal = 0.0
+            for mtransact in ldgrAccount:
+                acctTotal = acctTotal + mtransact[2] 
+            assetsTotal = assetsTotal + float(acctTotal)
+            cline = cline + 13
+            maccount = str(row[0])        
+            maccountLength = len(maccount)+(4-len(maccount))    # 4 x 7 =28
+            maccount = maccount.ljust(maccountLength)
+            self.reportWin.create_text(12,cline,anchor=tk.NW, text=maccount)
+            mDescription = row[1]
+            descLength = len(mDescription)+(30-len(mDescription))
+            mDescription = mDescription.ljust(descLength)
+            self.reportWin.create_text(63,cline,anchor=tk.NW, text=mDescription)
+            mBalance = str(round(acctTotal,2))        
+            mbalanceLength = len(mBalance)+(8-len(mBalance))     # 8 x 7 = 56
+            mBalance = mBalance.rjust(mbalanceLength)
+            self.reportWin.create_text(273,cline,anchor=tk.NW, text=mBalance)
+        
+        cline = cline + 20
+        self.reportWin.create_line(265,cline, 325,cline, fill="blue")
+        cline = cline + 13
+        mTotal = str(round(assetsTotal,2))        
+        mTotalLength = len(mTotal)+(10-len(mTotal))     # 8 x 7 = 56
+        mTotal = mTotal.rjust(mTotalLength)
+        self.reportWin.create_text(265,cline,anchor=tk.NW, text=mTotal)
+        cline = cline + 13
+        
+        # -------------------------------------------------------------
+        # get Expense block       
+        blockAcct=AccountDB.getBalSheetAccounts(self,(500,599))
+        expenseTotal = 0.0
+        # reset cline to top right
+        for row in blockAcct:
+            account = row[0]
+            ldgrAccount = AccountDB.getLedgerAccount(self,account)
+            acctTotal = 0.0
+            for mtransact in ldgrAccount:
+                acctTotal = acctTotal + mtransact[2] 
+            expenseTotal = expenseTotal + float(acctTotal)
+            cline = cline + 13
+            maccount = str(row[0])        
+            maccountLength = len(maccount)+(4-len(maccount))    # 4 x 7 =28
+            maccount = maccount.ljust(maccountLength)
+            self.reportWin.create_text(12,cline,anchor=tk.NW, text=maccount)
+            mDescription = row[1]
+            descLength = len(mDescription)+(30-len(mDescription))
+            mDescription = mDescription.ljust(descLength)
+            self.reportWin.create_text(63,cline,anchor=tk.NW, text=mDescription)
+            mBalance = str(round(acctTotal,2))        
+            mbalanceLength = len(mBalance)+(8-len(mBalance))     # 8 x 7 = 56
+            mBalance = mBalance.rjust(mbalanceLength)
+            self.reportWin.create_text(273,cline,anchor=tk.NW, text=mBalance)
+        
+        cline = cline + 20
+        self.reportWin.create_line(265,cline, 325,cline, fill="blue")
+        cline = cline + 13
+        mlTotal = str(round(expenseTotal,2))        
+        mlTotalLength = len(mlTotal)+(10-len(mlTotal))     # 8 x 7 = 56
+        mlTotal = mlTotal.rjust(mlTotalLength)
+        self.reportWin.create_text(265,cline,anchor=tk.NW, text=mlTotal) 
+        cline = cline + 13
+        lcline = cline
+        
+        # -------------------------------------------------------------
+        # -------------------------------------------------------------    
+        # get Credits
+        # get Liabilities and Equity block       
+        blockAcct=AccountDB.getBalSheetAccounts(self,(200,399))
+        liabilitiesTotal = 0.0
+        # reset cline to top right
+        cline = 78
+        for row in blockAcct:
+            account = row[0]
+            ldgrAccount = AccountDB.getLedgerAccount(self,account)
+            acctTotal = 0.0
+            for mtransact in ldgrAccount:
+                acctTotal = acctTotal + mtransact[2] 
+            liabilitiesTotal = liabilitiesTotal + float(acctTotal)
+            cline = cline + 13
+            maccount = str(row[0])        
+            maccountLength = len(maccount)+(4-len(maccount))    # 4 x 7 =28
+            maccount = maccount.ljust(maccountLength)
+            self.reportWin.create_text(344,cline,anchor=tk.NW, text=maccount)
+            mDescription = row[1]
+            descLength = len(mDescription)+(30-len(mDescription))
+            mDescription = mDescription.ljust(descLength)
+            self.reportWin.create_text(395,cline,anchor=tk.NW, text=mDescription)
+            mBalance = str(round(acctTotal,2))        
+            mbalanceLength = len(mBalance)+(8-len(mBalance))     # 8 x 7 = 56
+            mBalance = mBalance.rjust(mbalanceLength)
+            self.reportWin.create_text(612,cline,anchor=tk.NW, text=mBalance)
+        
+        cline = cline + 20
+        self.reportWin.create_line(598,cline, 663,cline, fill="blue")
+        cline = cline + 13
+        mrTotal = str(round(liabilitiesTotal,2))        
+        mrTotalLength = len(mrTotal)+(10-len(mrTotal))     # 8 x 7 = 56
+        mrTotal = mrTotal.rjust(mrTotalLength)
         self.reportWin.create_text(598,cline,anchor=tk.NW, text=mrTotal) 
         
-         
+        # -------------------------------------------------------------
+        # get revenue block  
+        cline = cline + 13
+        blockAcct=AccountDB.getBalSheetAccounts(self,(400,499))
+        revenueTotal = 0.0
+        for row in blockAcct:
+            account = row[0]
+            ldgrAccount = AccountDB.getLedgerAccount(self,account)
+            acctTotal = 0.0
+            for mtransact in ldgrAccount:
+                revenueTotal = revenueTotal + mtransact[2] 
+            assetsTotal = assetsTotal + float(acctTotal)
+            cline = cline + 13
+            maccount = str(row[0])        
+            maccountLength = len(maccount)+(4-len(maccount))    # 4 x 7 =28
+            maccount = maccount.ljust(maccountLength)
+            self.reportWin.create_text(344,cline,anchor=tk.NW, text=maccount)
+            mDescription = row[1]
+            descLength = len(mDescription)+(30-len(mDescription))
+            mDescription = mDescription.ljust(descLength)
+            self.reportWin.create_text(395,cline,anchor=tk.NW, text=mDescription)
+            mBalance = str(round(acctTotal,2))        
+            mbalanceLength = len(mBalance)+(8-len(mBalance))     # 8 x 7 = 56
+            mBalance = mBalance.rjust(mbalanceLength)
+            self.reportWin.create_text(612,cline,anchor=tk.NW, text=mBalance)
+        
+        cline = cline + 20
+        self.reportWin.create_line(598,cline, 663,cline, fill="blue")
+        
+        cline = cline + 13
+        mrTotal = str(round(revenueTotal,2))        
+        mrTotalLength = len(mrTotal)+(10-len(mrTotal))     # 8 x 7 = 56
+        mrTotal = mrTotal.rjust(mrTotalLength)
+        self.reportWin.create_text(598,cline,anchor=tk.NW, text=mrTotal) 
+        cline = cline + 13 
+        rcline = cline
+        # -------------------------------------------------------------
+        # check which cloumn is longer and use it
+        if lcline > rcline:
+            cline = lcline
+        else:
+            cline = rcline
+        cline = cline + 26
+        self.reportWin.create_line(10,cline, 670,cline, fill="blue")
+        cline = cline + 3
+        self.reportWin.create_line(10,cline, 670,cline, fill="blue")        
+        cline = cline + 26
+        debitTotal = assetsTotal + expenseTotal
+        self.reportWin.create_text(63,cline,anchor=tk.NW, text="Total Debits")
+        self.reportWin.create_text(265,cline,anchor=tk.NW, text=debitTotal)
+        creditTotal = liabilitiesTotal + revenueTotal
+        self.reportWin.create_text(395,cline,anchor=tk.NW, text="Total Credits")
+        self.reportWin.create_text(598,cline,anchor=tk.NW, text=creditTotal)  
         

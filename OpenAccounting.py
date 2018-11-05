@@ -377,10 +377,14 @@ class AccountingSystem():
     def do_balSheet(self):
         '''
         '''
+        
         proceedAnswer = mBox.askyesno("Balance Sheet Report","This can take a while.\nPrepare report now?")
         if (proceedAnswer):
-            ReportFormats.do_reptBalSheet(self)
-    
+            debandcred = TrialBalance.trialBalance(self)
+            if (debandcred[0]-debandcred[1]==0):
+                ReportFormats.do_reptBalSheet(self)
+            else:
+                mBox.showinfo('Failed trial balance' , 'The Ledger appears to be out of balance. \n A balance sheet may have errors\nPerform a Trial Balance to Investigate')
     def do_LedgerAcct(self):
         '''
         '''
@@ -391,9 +395,15 @@ class AccountingSystem():
     def do_RevandExp(self):
         '''
         '''
+        
         proceedAnswer = mBox.askyesno("Revenue and Expense Report","Prepare report now?")
         if (proceedAnswer):
-            ReportFormats.do_reptRevandExp(self)
+            debandcred = TrialBalance.trialBalance(self)
+            if (debandcred[0]-debandcred[1]==0):
+                ReportFormats.do_reptRevandExp(self)
+            else:
+                mBox.showinfo('Failed trial balance' , 'The Ledger appears to be out of balance. \nAn Income statment may have errors\nPerform a Trial Balance to Investigate')
+
 
     def do_trialBalance(self):
         '''
@@ -402,7 +412,7 @@ class AccountingSystem():
         '''
         proceedAnswer = mBox.askyesno("Trial Balance Report","This can take a while.\nPerform a trail balance now?")
         if (proceedAnswer):
-            pass
+            ReportFormats.do_reptTrialBalance(self)
         
     def do_printCurrentView(self):
         '''
@@ -423,7 +433,19 @@ class AccountingSystem():
         
         
         def notImplementedInfo(self):
-            mBox.showinfo('Function Not Implemented Yet, ' , 'Sorry this is not implemented in full yet.\n\n Note For Printing: you can take a screen shot and print from clipboard')
+            mBox.showinfo('Function Not Implemented Yet, ' , 'Sorry this is not implemented in full yet.\n\n Note For Printing: This is a high priority for me but tkinter is not very amenable to printing widget contents. However, at this time, you can take a screen shot and print from clipboard')
+        
+        def notImplementedPayroll(self):
+            mBox.showinfo('Payroll Not Implemented Yet, ' , 'Sorry this functionality is not implemented yet.\n\n This specialized journal will be developed after all basic accounting \nfunctionality is in place. Your support is appreciated')
+        
+        def notImplementedInventory(self):
+            mBox.showinfo('Inventory Not Implemented Yet, ' , 'Sorry this functionality is not implemented yet.\n\n This specialized journal will be developed after all basic accounting \nfunctionality is in place. Your support is appreciated')
+        
+        def notImplementedHelp(self):
+            mBox.showinfo('Help Not Implemented Yet, ' , 'Sorry the Help is not implemented in full yet.\n\n This is part of the basic application functionality and is next in priority. \nFor now the background in the github repository readme \nmay be helpful. See about, in help.')
+            
+        def notImplementedEndofCycle(self):
+            mBox.showinfo('End of Cycle Not Implemented Yet, ' , 'Sorry the comprehensive End of Cycle is not implemented in full yet.\n\n This is part of the basic application functionality and is a high priority for me.\n\nFor now, all closing activities can be carried out with the \nGeneral Journal if you are familiar with those tasks.')
         
         def fetchLedgerAccount(self):
             answer = simpledialog.askstring("Get Ledger Account", "What Account Number to retrieve?\n Enter '0' for ALL\n", parent=self.win)
@@ -626,7 +648,7 @@ class AccountingSystem():
         entryMenu.add_command(label="Make Memo", command=lambda: insertMemoForm(self))
         entryMenu.add_separator()
         entryMenu.add_command(label="Perform Trial Balance", command=lambda: self.do_trialBalance())
-        entryMenu.add_command(label="Perform End of Cycle")
+        entryMenu.add_command(label="Perform End of Cycle", command=lambda: notImplementedEndofCycle(self))
         menuBar.add_cascade(label="Activity", menu=entryMenu)
         
         # Add an Data entry Menu
@@ -644,17 +666,17 @@ class AccountingSystem():
         # Add an Edit Menu
         reportMenu = Menu(menuBar, tearoff=0)
         reportMenu.add_command(label="Balance Sheet", command=lambda: self.do_balSheet())
-        reportMenu.add_command(label="Ledger Account")
-        reportMenu.add_command(label="Income Report")
-        reportMenu.add_command(label="Expense Report")
-        reportMenu.add_command(label="Payroll Report")
-        reportMenu.add_command(label="Inventory Report")
+        reportMenu.add_command(label="Ledger Account", command=lambda: fetchLedgerAccount(self))
+        reportMenu.add_command(label="Income Report", command=lambda: self.do_RevandExp())
+        reportMenu.add_command(label="Expense Report", command=lambda: self.do_RevandExp())
+        reportMenu.add_command(label="Payroll Report", command=lambda: notImplementedPayroll(self))
+        reportMenu.add_command(label="Inventory Report",command=lambda: notImplementedInventory(self))
         menuBar.add_cascade(label="Reports", menu=reportMenu)
         
         # Add a Help Menu 
         helpMenu = Menu(menuBar, tearoff=0)
-        helpMenu.add_command(label="Context Help")
-        helpMenu.add_command(label="Documentation")
+        helpMenu.add_command(label="Context Help",command=lambda: notImplementedHelp(self))
+        helpMenu.add_command(label="Documentation",command=lambda: notImplementedHelp(self))
         helpMenu.add_command(label="About", command=lambda: info(self))
         menuBar.add_cascade(label="Help", menu=helpMenu)
 

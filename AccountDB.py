@@ -19,7 +19,7 @@ class AccountDB(object):
         Constructor
         '''
     
-        # #################################
+    # #################################
     # Database Functions
     # ################################# 
     
@@ -81,7 +81,8 @@ class AccountDB(object):
                 (120, "RECEIVABLES","DEBIT",0),
                 (200, "LIABILITIES","CREDIT",0), 
                 (220, "PAYABLES","CREDIT",0), 
-                (300, "EQUITY","CREDIT",0),  
+                (300, "EQUITY","CREDIT",0),
+                (399, "RETAINED EARNINGS", "CREDIT",0),  
                 (400, "REVENUE","CREDIT",0),
                 (500, "EXPENSES","DEBIT",0)        
                 ''')      
@@ -283,11 +284,9 @@ class AccountDB(object):
         db = sqlite3.connect('OpenAccounting.db')
         cursor = db.cursor()
         cursor.execute("SELECT actyType FROM Chart WHERE Account = {}".format(laccount,))
-        print(laccount)
         for row in cursor:            
             actyType.append(row)
         aType = actyType[0][0]
-        print(".."+aType+"..")
         if (txType=='DEBIT' and aType=='DEBIT') or (txType=='CREDIT' and aType=='CREDIT' ):            
             db.close()
             return 1
