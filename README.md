@@ -110,19 +110,35 @@ CREATE TABLE accountmemos (
 );
 
 ```
+In spite of the predominantly top-down approach evident, the functionality is determined by the data tables at the system's core. It is reasonable that a data heavy application be at it's heart data driven (here, bottom-up). The manipulation of the data is guided by the the needs of accounting, and the interface is key to that.
+
+Coding was M-V-C modular and this can be seen from the organization of the source. Starting with the interface, we present the screenshots that lead the bookkeeper to the accounting activities.
+
 ![Accounting System](/images/ScreenJournalTab.png)
+  
+Discussing the 'Accounting Functions' specifically  in light of the interface presented, consider the entry point to the system - the General Journal. The other accessible information is this accounting set-up reflected in the Chart of Accounts.
+
+![Accounting System](/images/ScreenChartTab.png)
+  
+The Ledger accounts set up via the Chart of Account are the records of where moneys are flowing from and to. The permanent account are those of the balance sheet, - in general terms the Assets and Liabilities. When the enterprise starts operating funds provided are the owner's equity, Accounts 300 and so on. The Core assets, 100 series accounts, are the Bank holding the capital itself and the incoming cash. Moneys owed to but not yet held by the compant are Accounts recevable (120). Obligations the company aquires are it's liabilities, 200 series accounts, principal among which is the Accounts Payable (220) as bills received but not yet paid. Other 100, 200 (and less so 300) series accounts may be used BUT the ones already mentioned are immutable and present in all accounting set-ups. At the start of use, the System provides these with the database tables created.
+
+Passing mention, for now, of the General Ledger is sufficient as this is not directly accessible, ever, but populated as Transactions in the Daily Journal entries. 
 
 ![Accounting System](/images/ScreenLedgerTab.png)
 
-![Accounting System](/images/ScreenChartTab.png)
+Later the General ledger is the source of the required and useful accounting reporting.
 
 ![Accounting System](/images/ScreenReportTab1.png)
 
 ![Accounting System](/images/ScreenReportTab2.png)
 
+The ability to annoted journal entries in more detail than the Transaction Descriptiong allows is desirable but not a canonical requirement per se in accounting systems. For our system the accounting memo interface expediteds this.
+  
 ![Accounting System](/images/ScreenMemoTab.png)
 
-![Accounting System](/images/MaintenanceTab.png)
+Lastly we consider the more general control required for any database systems and the consideration too of the face that accounting is a cyclical process focused on (rather artificial) fiscal periods of business activity. We need to be able to manage the system so a maintenance interface is provided.
+
+![Accounting System](/images/ScreenMaintenanceTab.png)
 
 ====
 
