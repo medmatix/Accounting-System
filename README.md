@@ -37,7 +37,43 @@ To debit a Debit Account is to increase it, similarly for crediting an Credit Ac
   
   
 ## Implementation:
-Once the structure is decied on the creation of the database and it's tables behind the interface and enabling code guided the development. The stored data must be clearly separated in development from the derived data. The latter are the reports and summaries also central to accounting, the balance sheet, revenue and expense reports and special or subsidiary journals which may play important parts in therereporting for some enterprises. The stored data which are SQLite Database and tables with keys and indexes are as follows.
+
+The Context of the development can be best represented by the list of imports. All non-standard libraries are pip installable.
+
+'''
+
+# #####################
+# Imports
+# #####################
+# Standard library and third party imports
+# tkinter imports
+import tkinter as tk
+from tkinter import ttk
+from tkinter import scrolledtext
+from tkinter import Menu
+from tkinter import messagebox as mBox
+from tkinter import simpledialog
+from tkinter import Scrollbar
+from tkinter import Canvas
+from tkinter import font
+# other standard and third party imports
+#    all 3rd party are pip installable
+import sqlite3
+import datetime as dt
+import pytz 
+import math as mt
+import numpy as np
+import sys
+
+'''
+
+# Custom module imports
+from AccountDB import AccountDB
+from FormDialogs import insertJournalForm, insertChartForm, insertMemoForm
+from FormDialogs import ReportFormats
+from Tooltips import createToolTip, ToolTip
+from ReportPreps import TrialBalance 
+Once the structure is decided on, the creation of the database, and it's tables behind the interface then the needed enabling code guided the development. The stored data must be clearly separated in development from the derived data. The latter are the reports and summaries also central to accounting, the balance sheet, revenue and expense reports and special or subsidiary journals which may play important parts in therereporting for some enterprises. The stored data which are SQLite Database and tables with keys and indexes are as follows.
 
 ### Tables of OpenAccounting.db:
 
