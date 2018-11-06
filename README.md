@@ -48,21 +48,13 @@ The Context of the development can be best represented by the list of imports. A
 
 ```
 import tkinter as tk
-
 from tkinter import ttk
-
 from tkinter import scrolledtext
-
 from tkinter import Menu
-
 from tkinter import messagebox as mBox
-
 from tkinter import simpledialog
-
 from tkinter import Scrollbar
-
 from tkinter import Canvas
-
 from tkinter import font
 ```
 
