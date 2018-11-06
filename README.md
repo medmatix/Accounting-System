@@ -40,13 +40,14 @@ To debit a Debit Account is to increase it, similarly for crediting an Credit Ac
 
 The Context of the development can be best represented by the list of imports. All non-standard libraries are pip installable.
 
+
+####Imports
+
+- Standard library and third party imports
+- tkinter imports
+
 '''
 
-# #####################
-# Imports
-# #####################
-# Standard library and third party imports
-# tkinter imports
 import tkinter as tk
 from tkinter import ttk
 from tkinter import scrolledtext
@@ -56,8 +57,13 @@ from tkinter import simpledialog
 from tkinter import Scrollbar
 from tkinter import Canvas
 from tkinter import font
-# other standard and third party imports
-#    all 3rd party are pip installable
+'''
+
+  - other standard and third party imports
+  - all 3rd party are pip installable
+  
+'''
+
 import sqlite3
 import datetime as dt
 import pytz 
