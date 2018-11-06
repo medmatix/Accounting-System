@@ -43,8 +43,8 @@ The Context of the development can be best represented by the list of imports. A
 
 #### Imports
 
-- Standard library and third party imports
-- tkinter imports
+  - Standard library and third party imports
+  - tkinter imports
 
 ```
 import tkinter as tk
@@ -64,15 +64,10 @@ from tkinter import font
 ```
 
 import sqlite3
-
 import datetime as dt
-
 import pytz
-
 import math as mt
-
 import numpy as np
-
 import sys
 ```
 
