@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 """
 Data Science Calculator Tool tips
-Adapted on Wed Sep 29, 2018 based on a template from
-Python GUI Programming Solutions, by Burkhardt Meyer Packt Publishing
-
+@acknowledgement: Adapted on Wed Sep 29, 2018 based on a template from,
+    Python GUI Programming Solutions, by Burkhardt Meyer Packt Publishing
 @author: David York
 @copyright: David York 2018
 @license: MIT license

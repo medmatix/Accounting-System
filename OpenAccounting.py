@@ -4,7 +4,7 @@ Created on Oct 17, 2018
 @summary: An open source double entry accounting system based on SQLite and written in python
 @note: Project pages at: https://medmatix.github.io/Accounting-System/
 @author: David York
-@version: 0.17
+@version: 0.21
 @copyright: David A York 2018
 @license: MIT
 @contact: http://crunches-data.appspot.com/contact.html
@@ -14,7 +14,7 @@ Created on Oct 17, 2018
 # Imports
 # #####################
 # Standard library and third party imports
-import sqlite3
+# tkinter imports
 import tkinter as tk
 from tkinter import ttk
 from tkinter import scrolledtext
@@ -24,22 +24,35 @@ from tkinter import simpledialog
 from tkinter import Scrollbar
 from tkinter import Canvas
 from tkinter import font
+from PIL import Image, ImageTk
+# other standard and third party imports
+#    all 3rd party are pip installable
+import sqlite3
+import datetime as dt
+import pytz 
 import math as mt
 import numpy as np
 import sys
+import os
+import pathlib
+import time
 
 # Custom module imports
 from AccountDB import AccountDB
+import FormDialogs
 from FormDialogs import insertJournalForm, insertChartForm, insertMemoForm
 from FormDialogs import ReportFormats
 from Tooltips import createToolTip, ToolTip
-from ReportPreps import TrialBalance 
+from ReportPreps import TrialBalance
+import splash 
 
 
  
 class AccountingSystem():
     '''
     Class for the Main Application
+    @summary: Application tkinter GUI interface and accounting function access
+    @note: From this module all the functionality of the accounting system is accessible
     '''
     def __init__(self):
         '''
@@ -50,14 +63,15 @@ class AccountingSystem():
            
         # Add a title
         self.win.title("Open Accounting")
+        
+        
         # Add a icon
         if not sys.platform.startswith('linux'):
             self.win.iconbitmap('./images/medmatix_tilt.ico')
             
         # Initialize widgets
-        self.createWidgets()    
+        self.createWidgets() 
         
-
     # #################################
     # GUI callback functions 
     # #################################   
@@ -417,8 +431,9 @@ class AccountingSystem():
     def do_printCurrentView(self):
         '''
         '''
-        
-        
+        proceedAnswer = mBox.askyesno("Print Current Report","Postcript write to file 'Printfile.ps'?")
+        if (proceedAnswer):
+            self.reportWin.postscript(file='Printfile.ps')
     
     # #####################################
     # Create GUI Functions (Visualization)
@@ -429,7 +444,7 @@ class AccountingSystem():
         '''
         # Messages and Dialogs -------------------------------------------
         def info(self):
-            mBox.showinfo('About OpenAccounting, ' , 'Application to Perform Basic GAAP Accounting functions.\n\n (c) David A York, 2018\n http:crunches-data.appspot.com \nVersion: 0.2, development version 0.17 \nlicense: MIT')
+            mBox.showinfo('About OpenAccounting, ' , 'Application to Perform Basic GAAP Accounting functions.\n\n (c) David A York, 2018\n http:crunches-data.appspot.com \nVersion: 0.2alpha, development version 0.21 \nlicense: MIT')
         
         
         def notImplementedInfo(self):
@@ -559,7 +574,7 @@ class AccountingSystem():
         self.action_listAccounts.grid(column=4, row=0, padx=4, pady=6)
         self.action_revenueExpense = ttk.Button(self.reportctl, text="Revenue and Expenses", command=lambda: self.do_RevandExp())
         self.action_revenueExpense.grid(column=5, row=0, padx=4, pady=6)
-        self.action_viewPrint = ttk.Button(self.reportctl, text="Print", command=lambda: notImplementedInfo(self))
+        self.action_viewPrint = ttk.Button(self.reportctl, text="Print", command=lambda: self.do_printCurrentView())
         self.action_viewPrint.grid(column=6, row=0, padx=4, pady=6)
         self.reportWin = Canvas(frm4b, width=700, height=550,bg='#FFFFFF',scrollregion=(0,0,1000,2000)) 
         hbar=Scrollbar(frm4b,orient=tk.HORIZONTAL)
@@ -682,8 +697,24 @@ class AccountingSystem():
 
         
 if __name__ == '__main__':
+    '''
+    Main Method, OpenAccounting application start-up
+    @summary: Starts the splash screen the when that is closed, the application window opens 
+    @warning: the application starts with what ever data is in the app directory, AccountDB.db
+        If no such database files exist they can be created as new.
+        @author: David York 11/7/2018
+        @version: 0.20
+    '''
+    spl = splash.splashScreen()
     asys = AccountingSystem()
     w = (2*asys.win.winfo_screenwidth())/3
     h = (3*asys.win.winfo_screenheight())/4
     asys.win.geometry("%dx%d+0+0" % (w, h))
+    '''
+    @attention: the following solution to center the app comes from stackoverflow:
+    @author:  idbrii Jan 17 '17 at 19:11, 
+    https://stackoverflow.com/questions/3352918/how-to-center-a-window-on-the-screen-in-tkinter
+    @accessed: 11/7/2018 12:35PM
+    '''
+    asys.win.eval('tk::PlaceWindow %s center' % asys.win.winfo_toplevel())
     asys.win.mainloop()

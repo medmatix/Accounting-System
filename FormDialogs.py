@@ -10,22 +10,33 @@ Created on Oct 30, 2018
 # Imports
 # ######################################
 import tkinter as tk
-from tkinter import ttk
+from tkinter import ttk, LabelFrame
 from tkinter import scrolledtext
-import datetime as dt
-import pytz 
-from AccountDB import AccountDB
-from Tooltips import createToolTip
+from tkinter import Canvas
 from tkinter import font
+from PIL import Image, ImageTk
+ 
+
 import math as mt
 import numpy as np
+import datetime as dt
+import pytz
 
+from AccountDB import AccountDB
+from Tooltips import createToolTip
+import os 
+import pathlib
 # #######################################################
 # Classes, Independently constructed Forms, Dialogs etc
 # #######################################################
 '''
 Classes, External, independently constructed Forms, Dialogs etc
 '''
+
+
+
+        
+        
 class insertJournalForm(object):
     '''
     A form-dialog class insertion Form to building and display for Journal Access 

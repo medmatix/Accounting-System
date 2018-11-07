@@ -1,7 +1,8 @@
 '''
+AccountDB module
 Created on Oct 29, 2018
-
-@author: david
+@summary: This module provides all the database access methods for the accounting system
+@author: david york
 '''
 import sqlite3
 import tkinter as tk
