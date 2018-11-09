@@ -16,10 +16,9 @@ The entry of business activities is first into the Journal, or day book. The ite
 It should be impossible to enter any accounting data except through the general journal. Accounts should be easily added but not removable unless never referenced in transactions (i.e There must never have been any entries for the account in the current fiscal cycle (year), meaning since the books were last closed out).
 
 ## Manual
-This readme is intended to serve as my development notes and discussion for the system. It helps me organize my thoughts and is the source document upon which (I hope. . .) helpful comments can be made .
+This readme is intended to serve as my development notes and discussion for the system. It helps me organize my thoughts and is the source document upon which (I hope. . .) helpful comments can be made.
 
-I have made a start on a user a Manual of sorts in the attaching wiki here [Manual wiki](https://github.com/medmatix/Accounting-System/wiki)
-
+I have made a start on a user a Manual of sorts in the attaching wiki here at the [Manual Wiki](https://github.com/medmatix/Accounting-System/wiki)
 
 ## Approach
 Thus the Journal is where data enters the system and is the date-time record of activity. Data is then reorganized and transferred to the Ledger. The ledger is the categorized permanent record of the enterprise's functioning - taking in revenue and paying expenses to produce some value. The business operation is accountable to internal and external stakeholders. This accounting to stakeholders requires a data trail is maintained with integrity and be demonstable on demand. The audit trailas it is called must be immutable right to the reports needed to account to stakeholders.
