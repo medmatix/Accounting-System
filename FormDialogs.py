@@ -356,14 +356,15 @@ class ReportFormats():
         # self.reportWin.create_text(150,18,anchor=tk.NW, text='Date')
         # self.reportWin.create_text(196,18,anchor=tk.NW, text='Time')
         self.reportWin.create_text(150,18,anchor=tk.NW, text='Description')
-        self.reportWin.create_text(420,18,anchor=tk.NW, text='Amount')
-        self.reportWin.create_text(485,18,anchor=tk.NW, text='Balance')
+        self.reportWin.create_text(430,18,anchor=tk.NW, text='Amount')
+        self.reportWin.create_text(495,18,anchor=tk.NW, text='Balance')
         cline = 18
         cline = cline + 20
         self.reportWin.create_line(10,cline, 670,cline, fill="blue")
         cline = cline + 3
         self.reportWin.create_line(10,cline, 670,cline, fill="blue")
         for row in ledgerAcct:
+            
             cline = cline + 13
             maccount = str(row[0])        
             maccountLength = len(maccount)+(4-len(maccount))    # 4 x 7 =28
@@ -373,14 +374,20 @@ class ReportFormats():
             transactLength = 16                                 # 16 x 7 = 112
             mTransact = mTransact.ljust(transactLength)
             self.reportWin.create_text(62,cline,anchor=tk.NW, text=mTransact)
+            transact = AccountDB.getJournalTransact(self,mTransact)
+            for line in transact:
+                mDescription = line[3]
+                descLength = len(mDescription)+(30-len(mDescription))
+                mDescription = mDescription.ljust(descLength)
+                self.reportWin.create_text(150,cline,anchor=tk.NW, text=mDescription)
             mAmount = str(round(row[2],2))        
             mamountLength = len(mAmount)+(8-len(mAmount))     # 8 x 7 = 56
             mAmount = mAmount.rjust(mamountLength)
-            self.reportWin.create_text(420,cline,anchor=tk.NW, text=mAmount)
+            self.reportWin.create_text(430,cline,anchor=tk.NW, text=mAmount)
             mBalance = str(round(row[3],2))        
             mbalanceLength = len(mBalance)+(8-len(mBalance))     # 8 x 7 = 56
             mBalance = mBalance.rjust(mbalanceLength)
-            self.reportWin.create_text(485,cline,anchor=tk.NW, text=mBalance)
+            self.reportWin.create_text(495,cline,anchor=tk.NW, text=mBalance)
         cline = cline + 20
         self.reportWin.create_line(10,cline, 670,cline, fill="blue")
         cline = cline + 3
@@ -950,7 +957,7 @@ class ReportFormats():
         cline = cline + 13 
         rcline = cline
         # -------------------------------------------------------------
-        # check which cloumn is longer and use it
+        # check which column is longer and use it
         if lcline > rcline:
             cline = lcline
         else:
